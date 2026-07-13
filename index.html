@@ -1006,7 +1006,7 @@
             </div>
           </div>
           <div class="form-group full">
-            <div id="tbPaturiNote" style="display:none;"></div>
+            <div id="tbPaturiNote"></div>
             <label for="mesajTB">Detalii grup / preferințe</label>
             <textarea id="mesajTB" name="mesajTB" placeholder="Ex: grup de colegi, 2 nopți, preferăm activități de drumeție și foc de tabară..."></textarea>
           </div>
@@ -1591,31 +1591,30 @@
 
   // ── Steppere TB ───────────────────────────────────────────────
   var tbA = 4, tbC = 0;
+  var TB_MAX_ADULTI = 12, TB_MAX_COPII = 6;
   function renderTB() {
-    var tot = tbA + tbC;
     document.getElementById('tbAdultiVal').textContent = lbl(tbA, 'adult', 'adulți');
     document.getElementById('tbAdulti').value = tbA;
     document.getElementById('tbAdultDown').disabled = tbA <= 4;
-    document.getElementById('tbAdultUp').disabled   = tot >= MAX;
+    document.getElementById('tbAdultUp').disabled   = tbA >= TB_MAX_ADULTI;
     document.getElementById('tbCopiiVal').textContent = lbl(tbC, 'copil', 'copii');
     document.getElementById('tbCopii').value = tbC;
     document.getElementById('tbCopilDown').disabled = tbC <= 0;
-    document.getElementById('tbCopilUp').disabled   = tot >= MAX;
+    document.getElementById('tbCopilUp').disabled   = tbC >= TB_MAX_COPII;
 
-    // Notă paturi pliante pentru grupuri > 12
+    // Notă paturi pliante pentru copii (mereu vizibilă, cu detalii dinamice)
     var noteEl = document.getElementById('tbPaturiNote');
-    if (tot > 12) {
-      var nPl = Math.min(6, tot - 12);
-      noteEl.innerHTML = '<div class="capacity-warning" style="margin-top:12px;"><span class="warn-icon">ℹ️</span>' +
-        '<span>Pentru grupuri de peste 12 persoane sunt disponibile <strong>până la 6 paturi pliante</strong> suplimentare (câte unul per cameră), la <strong>50 lei/noapte</strong> fiecare. ' +
-        'Pentru grupul dvs. de ' + tot + ' persoane vor fi necesare <strong>' + nPl + ' paturi pliante</strong>.</span></div>';
-      noteEl.style.display = '';
-    } else {
-      noteEl.style.display = 'none';
-    }
+    var plMsg = tbC > 0
+      ? 'Ați adăugat <strong>' + tbC + (tbC === 1 ? ' copil' : ' copii') + '</strong> — ' +
+        'fiecare va avea un <strong>pat pliant</strong> (50 lei/noapte). ' +
+        'Puteți adăuga până la <strong>' + TB_MAX_COPII + ' copii</strong> total.'
+      : 'Capacitate maximă: <strong>' + TB_MAX_ADULTI + ' adulți</strong>. ' +
+        'Pentru copii sunt disponibile până la <strong>' + TB_MAX_COPII + ' paturi pliante</strong> suplimentare, la <strong>50 lei/noapte</strong> fiecare.';
+    noteEl.innerHTML = '<div class="capacity-warning" style="margin-top:12px;"><span class="warn-icon">ℹ️</span><span>' + plMsg + '</span></div>';
+    noteEl.style.display = '';
   }
-  function stepTBAdulti(d) { tbA = Math.min(MAX - tbC, Math.max(4, tbA + d)); renderTB(); }
-  function stepTBCopii(d)  { tbC = Math.min(MAX - tbA, Math.max(0, tbC + d)); renderTB(); }
+  function stepTBAdulti(d) { tbA = Math.min(TB_MAX_ADULTI, Math.max(4, tbA + d)); renderTB(); }
+  function stepTBCopii(d)  { tbC = Math.min(TB_MAX_COPII,  Math.max(0, tbC + d)); renderTB(); }
 
   // ── Init ──────────────────────────────────────────────────────
   renderStd();
