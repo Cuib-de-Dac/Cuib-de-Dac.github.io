@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Cuib de Dac</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a2e; min-height: 100vh; }
@@ -198,7 +198,7 @@
 
 <script>
 var FB_CONFIG = {
-  apiKey:            "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGU09eQ",
+  apiKey:            "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGUO9eQ",
   authDomain:        "cuib-de-dac.firebaseapp.com",
   projectId:         "cuib-de-dac",
   storageBucket:     "cuib-de-dac.firebasestorage.app",
@@ -207,10 +207,9 @@ var FB_CONFIG = {
 };
 
 firebase.initializeApp(FB_CONFIG);
-var auth = firebase.auth();
-var db   = firebase.firestore();
+var db = firebase.firestore();
 
-// ── AUTH (hash local + anonymous Firebase) ──
+// ── AUTH LOCAL (hash SHA-256 + sessionStorage) ──
 var PASS_HASH = 'c73268030cd98fbcc86cb0843b6d0853665057e6cb117369b2923698b6e39ff3';
 
 async function sha256(str) {
@@ -218,16 +217,28 @@ async function sha256(str) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-auth.onAuthStateChanged(function(user) {
-  if (user) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('userEmail').textContent = 'Admin';
-    listenCereri();
-    listenRezervari();
+function showDashboard() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('userEmail').textContent = 'Admin';
+  listenCereri();
+  listenRezervari();
+}
+
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+// Verifică dacă e deja logat
+document.addEventListener('DOMContentLoaded', function() {
+  if (sessionStorage.getItem('admin_ok') === '1') {
+    firebase.auth().signInAnonymously().then(showDashboard).catch(function() {
+      sessionStorage.removeItem('admin_ok');
+      showLogin();
+    });
   } else {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('dashboard').style.display = 'none';
+    showLogin();
   }
 });
 
@@ -243,18 +254,23 @@ function doLogin() {
       btn.disabled = false; btn.textContent = 'Intră în cont';
       return;
     }
-    auth.signInAnonymously().catch(function(e) {
-      err.textContent = 'Eroare Firebase: ' + e.code;
+    firebase.auth().signInAnonymously().then(function() {
+      sessionStorage.setItem('admin_ok', '1');
+      showDashboard();
+    }).catch(function(e) {
+      err.textContent = 'Eroare autentificare: ' + e.message;
       btn.disabled = false; btn.textContent = 'Intră în cont';
     });
   });
 }
 
 function doLogout() {
-  auth.signOut();
+  firebase.auth().signOut();
+  sessionStorage.removeItem('admin_ok');
+  showLogin();
 }
 
-document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+
 document.getElementById('loginPass').addEventListener('keydown',  function(e){ if(e.key==='Enter') doLogin(); });
 
 // ── CERERI ──
