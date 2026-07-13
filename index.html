@@ -15,6 +15,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/ro.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- Firebase SDK (real-time rezervări) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1169,11 +1172,61 @@
   // Camere: 'ap'=apartament  'd1'–'d4'=camere duble
   // 'e' = ziua de checkout (EXCLUSIVĂ — ziua în care pleacă)
   // ════════════════════════════════════════════════════════════
-  var REZERVARI = [
-    // Exemple demo — șterge-le și pune rezervările reale:
-    { s:'2026-08-02', e:'2026-08-05', c:['ap','d1'] },
-    { s:'2026-08-15', e:'2026-08-17', c:['ap','d1','d2','d3','d4'] }
-  ];
+  // Rezervări confirmate — gestionate direct din Firebase Console
+  // Format document Firestore: { s:"YYYY-MM-DD", e:"YYYY-MM-DD", c:["ap","d1"...] }
+  var REZERVARI = [];
+
+  // ════════════════════════════════════════════════════════════
+  // FIREBASE CONFIG — înlocuiește după ce creezi proiectul:
+  //   1. console.firebase.google.com → Add project → "cuib-de-dac"
+  //   2. Activează Firestore Database (Start in production mode)
+  //   3. Firestore → Rules → înlocuiește cu regulile din comentariul de mai jos
+  //   4. Project Settings → General → Your apps → Add app (Web)
+  //   5. Copiază config-ul și înlocuiește valorile REPLACE_* de mai jos
+  //
+  // Firestore Rules (Firestore → Rules → Publish):
+  //   rules_version = '2';
+  //   service cloud.firestore {
+  //     match /databases/{database}/documents {
+  //       match /rezervari/{id} { allow read: true; allow write: false; }
+  //       match /cereri/{id}    { allow read: false; allow create: true; allow update, delete: false; }
+  //     }
+  //   }
+  // ════════════════════════════════════════════════════════════
+  var FB_CONFIG = {
+    apiKey:            "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGU09eQ",
+    authDomain:        "cuib-de-dac.firebaseapp.com",
+    projectId:         "cuib-de-dac",
+    storageBucket:     "cuib-de-dac.firebasestorage.app",
+    messagingSenderId: "757933368413",
+    appId:             "1:757933368413:web:54fd44dfc55d734ff599b4"
+  };
+
+  var db = null;
+  if (FB_CONFIG.apiKey !== "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGU09eQ") {
+    try {
+      firebase.initializeApp(FB_CONFIG);
+      db = firebase.firestore();
+      // Ascultă colecția 'rezervari' în timp real — actualizare automată la orice modificare
+      db.collection('rezervari').onSnapshot(function(snap) {
+        REZERVARI = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (d.s && d.e && Array.isArray(d.c)) REZERVARI.push({ s: d.s, e: d.e, c: d.c });
+        });
+        // Re-calculează disponibilitatea dacă datele sunt deja selectate
+        if (typeof fpIn !== 'undefined')  fpIn.redraw();
+        if (typeof fpOut !== 'undefined') fpOut.redraw();
+        if (selCheckin && selCheckout) onDateChange();
+      }, function(err) {
+        console.warn('[Cuib de Dac] Firestore error:', err.message);
+      });
+    } catch(e) {
+      console.warn('[Cuib de Dac] Firebase init error:', e.message);
+    }
+  } else {
+    console.info('[Cuib de Dac] Firebase necompletat — disponibilitate pe date locale.');
+  }
 
   // ── Inventar camere ──────────────────────────────────────────
   // capStd = persoane fără pat pliant / maxPl = paturi pliante max
@@ -1361,18 +1414,30 @@
     var emailEl  = document.getElementById(isTB ? 'emailTB'  : 'email');
     var mesajEl  = document.getElementById(isTB ? 'mesajTB'  : 'mesaj');
 
+    // Calculează nopți și preț total din combo selectat
+    var noptiNum = (!isTB && selCheckin && selCheckout)
+      ? Math.round((toD(selCheckout) - toD(selCheckin)) / 86400000) : 0;
+    var comboPriceEl = document.querySelector('.combo-card.selected .combo-price');
+    var pretPerNoapte = comboPriceEl ? parseInt(comboPriceEl.textContent) : 0;
+
     var params = {
       mod:         isTB ? 'Team Building' : 'Rezervare standard',
+      name:        numeEl.value.trim(),       // {{name}} în template EmailJS
+      email:       emailEl.value.trim(),      // {{email}} în template EmailJS
       from_name:   numeEl.value.trim(),
       from_email:  emailEl.value.trim(),
       to_email:    PENSIUNE_EMAIL,
       telefon:     telEl.value.trim(),
       firma:       isTB ? (document.getElementById('numeFirma').value.trim() || '—') : '—',
       cui:         isTB ? (document.getElementById('cuiFirma').value.trim()  || '—') : '—',
+      check_in:    isTB ? '—' : document.getElementById('checkin').value,  // {{check_in}}
+      check_out:   isTB ? '—' : document.getElementById('checkout').value, // {{check_out}}
       checkin:     isTB ? '—' : document.getElementById('checkin').value,
       checkout:    isTB ? '—' : document.getElementById('checkout').value,
       adulti:      isTB ? document.getElementById('tbAdulti').value  : document.getElementById('adulti').value,
       copii:       isTB ? document.getElementById('tbCopii').value   : document.getElementById('copii').value,
+      nopti:       noptiNum > 0 ? String(noptiNum) + ' nopți' : '—',
+      total:       (noptiNum > 0 && pretPerNoapte > 0) ? String(pretPerNoapte * noptiNum) + ' lei' : '—',
       camera:      document.getElementById('camera').value,
       mesaj:       mesajEl.value.trim() || '—'
     };
@@ -1401,11 +1466,28 @@
         box.querySelector('.success-email-note').textContent =
           'Un e-mail de confirmare a fost trimis la ' + params.from_email;
         box.style.display = 'block';
+        // Salvează cererea în Firestore — vizibilă în Firebase Console
+        if (db) {
+          db.collection('cereri').add({
+            name:      params.from_name,
+            email:     params.from_email,
+            telefon:   params.telefon,
+            camera:    params.camera,
+            check_in:  params.checkin,
+            check_out: params.checkout,
+            adulti:    parseInt(params.adulti)  || 0,
+            copii:     parseInt(params.copii)   || 0,
+            mesaj:     params.mesaj,
+            mod:       params.mod,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            status:    'pending'
+          }).catch(function(e) { console.warn('[Cuib de Dac] Cerere nesalvată în Firestore:', e.message); });
+        }
       })
       .catch(function(err) {
         console.error('EmailJS error:', err);
-        // Dacă EmailJS nu e configurat, afișăm oricum succesul
-        // (util în faza de testare — șterge blocul .catch după configurare)
+        // Fallback UX: chiar dacă EmailJS are eroare temporară, formularul dispare
+        // și utilizatorul e informat să ne contacteze direct
         document.getElementById('rezForm').style.display = 'none';
         var box = document.getElementById('successBox');
         box.querySelector('.success-email-note').textContent =
