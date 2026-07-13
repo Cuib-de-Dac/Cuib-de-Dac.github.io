@@ -181,10 +181,10 @@
             <label>Camere blocate</label>
             <div class="camere-check">
               <label><input type="checkbox" value="ap"> Apartament</label>
-              <label><input type="checkbox" value="d1"> D1</label>
-              <label><input type="checkbox" value="d2"> D2</label>
-              <label><input type="checkbox" value="d3"> D3</label>
-              <label><input type="checkbox" value="d4"> D4</label>
+              <label><input type="checkbox" value="p1"> P1</label>
+              <label><input type="checkbox" value="e1"> E1</label>
+              <label><input type="checkbox" value="e2"> E2</label>
+              <label><input type="checkbox" value="e3"> E3</label>
             </div>
           </div>
           <div>
@@ -351,14 +351,14 @@ function camToCode(cam) {
   // Mapează numele afișat al camerei la codul folosit în disponibilitate
   cam = (cam || '').toLowerCase();
   if (cam.includes('apart')) return ['ap'];
-  if (cam.includes('d1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['d1'];
-  if (cam.includes('d2') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['d2'];
-  if (cam.includes('d3') || cam.includes('dubla 3') || cam.includes('dublă 3')) return ['d3'];
-  if (cam.includes('d4') || cam.includes('dubla 4') || cam.includes('dublă 4')) return ['d4'];
+  if (cam.includes('p1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['p1'];
+  if (cam.includes('e1') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['e1'];
+  if (cam.includes('e2') || cam.includes('dubla 3') || cam.includes('dublă 3')) return ['e2'];
+  if (cam.includes('e3') || cam.includes('dubla 4') || cam.includes('dublă 4')) return ['e3'];
   // Combo
   var codes = [];
   if (cam.includes('ap')) codes.push('ap');
-  ['d1','d2','d3','d4'].forEach(function(d){ if(cam.includes(d)) codes.push(d); });
+  ['p1','e1','e2','e3'].forEach(function(d){ if(cam.includes(d)) codes.push(d); });
   return codes.length ? codes : ['ap']; // fallback
 }
 

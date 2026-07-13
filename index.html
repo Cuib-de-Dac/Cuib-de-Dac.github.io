@@ -1168,12 +1168,12 @@
 
   // ════════════════════════════════════════════════════════════
   // REZERVĂRI CONFIRMATE — adaugă-le manual după confirmare
-  // Format: { s:'YYYY-MM-DD', e:'YYYY-MM-DD', c:['ap','d1'...] }
-  // Camere: 'ap'=apartament  'd1'–'d4'=camere duble
+  // Format: { s:'YYYY-MM-DD', e:'YYYY-MM-DD', c:['ap','p1'...] }
+  // Camere: 'ap'=apartament  'p1'–'e3'=camere duble
   // 'e' = ziua de checkout (EXCLUSIVĂ — ziua în care pleacă)
   // ════════════════════════════════════════════════════════════
   // Rezervări confirmate — gestionate direct din Firebase Console
-  // Format document Firestore: { s:"YYYY-MM-DD", e:"YYYY-MM-DD", c:["ap","d1"...] }
+  // Format document Firestore: { s:"YYYY-MM-DD", e:"YYYY-MM-DD", c:["ap","p1"...] }
   var REZERVARI = [];
 
   // ════════════════════════════════════════════════════════════
@@ -1232,10 +1232,10 @@
   // capStd = persoane fără pat pliant / maxPl = paturi pliante max
   var INV = {
     ap: { capStd:4, maxPl:2 },
-    d1: { capStd:2, maxPl:1 },
-    d2: { capStd:2, maxPl:1 },
-    d3: { capStd:2, maxPl:1 },
-    d4: { capStd:2, maxPl:1 }
+    p1: { capStd:2, maxPl:1 },
+    e1: { capStd:2, maxPl:1 },
+    e2: { capStd:2, maxPl:1 },
+    e3: { capStd:2, maxPl:1 }
   };
 
   // ── Funcții disponibilitate ──────────────────────────────────
@@ -1255,7 +1255,7 @@
   function calcDisp(sStr, eStr) {
     var bl=getCamereBlocate(sStr,eStr);
     var avDubles=0, avAp=!bl['ap'];
-    ['d1','d2','d3','d4'].forEach(function(d){ if(!bl[d]) avDubles++; });
+    ['p1','e1','e2','e3'].forEach(function(d){ if(!bl[d]) avDubles++; });
     var avPl = avDubles*1 + (avAp?2:0);
     return { dubles:avDubles, ap:avAp, pliante:avPl,
              totalStd: avDubles*2+(avAp?4:0),
