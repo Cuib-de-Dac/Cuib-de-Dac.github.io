@@ -221,6 +221,29 @@
       .section { padding:3rem 1.25rem; }
       .section-full { padding:3rem 1.25rem; }
     }
+    /* ══ CONTACT ══ */
+    .contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .contact-card {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.4rem; box-shadow:var(--shadow);
+      display:flex; gap:14px; align-items:flex-start;
+      transition:box-shadow 0.2s,transform 0.2s;
+    }
+    .contact-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .contact-icon {
+      width:42px; height:42px; border-radius:var(--radius-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .contact-card:nth-child(1) .contact-icon { background:#fce8e6; }
+    .contact-card:nth-child(2) .contact-icon { background:var(--bg-green); }
+    .contact-card:nth-child(3) .contact-icon { background:var(--bg-sky); }
+    .contact-card h4 { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:4px; }
+    .contact-card p  { font-size:14px; color:var(--text); font-weight:500; }
+    .contact-card a  { color:var(--sky); }
+    .eyebrow.sec-amber { color:var(--amber); }
+    .eyebrow.sec-amber::before { background:var(--amber); }
+    @media(max-width:600px) { .contact-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -244,21 +267,21 @@
       <span>Cuib de Dac</span>
     </div>
     <div class="nav-links">
-      <a href="cuib_de_dac.html">Acasă</a>
-      <a href="cuib_de_dac.html#cazare">Cazare</a>
+      <a href="index.html">Acasă</a>
+      <a href="index.html#cazare">Cazare</a>
       <a href="activitati.html" class="active">Activități</a>
-      <a href="cuib_de_dac.html#contact">Contact</a>
+      <a href="index.html#contact">Contact</a>
     </div>
-    <a href="#rezervare" class="nav-cta">Vreau să vin</a>
+    <a href="index.html#rezervare" class="nav-cta">Vreau să vin</a>
     <div class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Meniu">
       <span></span><span></span><span></span>
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="cuib_de_dac.html"          onclick="closeMenu()">Acasă</a>
-    <a href="cuib_de_dac.html#cazare"   onclick="closeMenu()">Cazare</a>
+    <a href="index.html"          onclick="closeMenu()">Acasă</a>
+    <a href="index.html#cazare"   onclick="closeMenu()">Cazare</a>
     <a href="activitati.html"            onclick="closeMenu()">Activități</a>
-    <a href="cuib_de_dac.html#contact"  onclick="closeMenu()">Contact</a>
+    <a href="index.html#contact"  onclick="closeMenu()">Contact</a>
     <a href="tel:0785612368" style="color:var(--amber);font-weight:600;margin-top:4px;">📞 0785 612 368</a>
   </div>
 </nav>
@@ -310,7 +333,7 @@
         <p>Traseu marcat prin păduri de fag și molid, cu priveliști panoramice spre vârfurile alpine. Ghid local inclus, echipament de bază necesar. Potrivit pentru familii și începători.</p>
         <div class="act-footer">
           <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
-          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Drumeție ghidată Munții Parâng')">Vreau să vin</a>
+          <a href="index.html#rezervare" class="btn-rezerva" onclick="selectAct('Drumeție ghidată Munții Parâng')">Vreau să vin</a>
         </div>
       </div>
     </div>
@@ -351,7 +374,7 @@
         <p>Trasee echipate cu bare, scări și cabluri de siguranță pe pereții din Cheile Galbenului — organizate de <strong>Clubul Montan White Wolf</strong>. Pe traseele normale pot merge inclusiv copii de 6 ani cu puțin ajutor. Echipamentul de protecție se închiriază direct de la White Wolf. Noi te însoțim și te ajutăm să ajungi acolo.</p>
         <div class="act-footer">
           <div style="font-size:12px;color:var(--muted);line-height:1.4;">Echipament închiriat<br>de la Clubul White Wolf</div>
-          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Via Ferrata Baia de Fier')">Mă interesează</a>
+          <a href="index.html#rezervare" class="btn-rezerva" onclick="selectAct('Via Ferrata Baia de Fier')">Mă interesează</a>
         </div>
       </div>
     </div>
@@ -386,7 +409,7 @@
         <p>Plimbare prin cheile spectaculoase de pe râul Galben, cu pereți stâncoși, cascade și vegetație luxuriantă. Traseu parțial prin apă — bocanci impermeabili recomandați.</p>
         <div class="act-footer">
           <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
-          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Cheile Galbenului — Explorare')">Vreau să vin</a>
+          <a href="index.html#rezervare" class="btn-rezerva" onclick="selectAct('Cheile Galbenului — Explorare')">Vreau să vin</a>
         </div>
       </div>
     </div>
@@ -426,7 +449,7 @@
         <p>Turul celui mai înalt drum asfaltat din România — Transalpina (DN67C) — cu opriri la priveliști panoramice și Lacul Vidra. Transport inclus, plecare din fața pensiunii.</p>
         <div class="act-footer">
           <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
-          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Excursie Transalpina & Lacul Vidra')">Vreau să vin</a>
+          <a href="index.html#rezervare" class="btn-rezerva" onclick="selectAct('Excursie Transalpina & Lacul Vidra')">Vreau să vin</a>
         </div>
       </div>
     </div>
@@ -468,7 +491,7 @@
         <p>Învață să gătești sarmale, tocană cu mămăligă și prăjituri tradiționale alături de gazda pensiunii. La final, degustăm împreună. Potrivit pentru cupluri, familii și grupuri.</p>
         <div class="act-footer">
           <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
-          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Atelier de bucătărie oltenească')">Vreau să vin</a>
+          <a href="index.html#rezervare" class="btn-rezerva" onclick="selectAct('Atelier de bucătărie oltenească')">Vreau să vin</a>
         </div>
       </div>
     </div>
@@ -564,6 +587,38 @@
   </div>
 </section>
 
+<!-- CONTACT -->
+<div class="section-full bg-amber" id="contact">
+  <div class="inner">
+    <div class="eyebrow sec-amber">Contact</div>
+    <h2>Unde ne găsești</h2>
+    <p class="lead">Suntem la dispoziția dumneavoastră pentru orice întrebare.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📍</div>
+        <div>
+          <h4>Adresă</h4>
+          <p>Str. Viorelelor nr. 31<br>Baia de Fier, Gorj</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <div>
+          <h4>Telefon</h4>
+          <p><a href="tel:0785612368">0785 612 368</a></p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <h4>Email</h4>
+          <p><a href="mailto:alexandru.israil040@gmail.com">alexandru.israil040@gmail.com</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CTA -->
 <div class="cta-wrap">
   <div class="cta-banner">
@@ -571,7 +626,7 @@
       <h2>Cauți și cazare?</h2>
       <p>Combină activitățile cu un sejur la Cuib de Dac — camere de la 150 lei/noapte.</p>
     </div>
-    <a href="cuib_de_dac.html#rezervare" class="btn-cta">Rezervă cameră</a>
+    <a href="index.html#rezervare" class="btn-cta">Rezervă cameră</a>
   </div>
 </div>
 
@@ -591,7 +646,7 @@
   </div>
   <div class="foot-divider"></div>
   <p>Str. Viorelelor nr. 31, Baia de Fier, Gorj · <a href="tel:0785612368">0785 612 368</a></p>
-  <p style="margin-top:8px;"><a href="cuib_de_dac.html">← Înapoi la pagina principală</a></p>
+  <p style="margin-top:8px;"><a href="index.html">← Înapoi la pagina principală</a></p>
   <p style="margin-top:12px;font-size:12px;">© 2026 Pensiunea Cuib de Dac · Toate drepturile rezervate</p>
 </footer>
 
