@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Cuib de Dac</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a2e; min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: linear-gradient(135deg, #2a6e18 0%, #2a7fb8 100%);
+    }
+    .login-card {
+      background: #fff; border-radius: 16px; padding: 48px 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2); width: 380px; text-align: center;
+    }
+    .login-card .logo { font-size: 2.4rem; margin-bottom: 8px; }
+    .login-card h1 { font-size: 1.4rem; color: #2a6e18; margin-bottom: 4px; }
+    .login-card p  { font-size: 0.9rem; color: #666; margin-bottom: 28px; }
+    .login-card input {
+      width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0;
+      border-radius: 8px; font-size: 1rem; margin-bottom: 14px; outline: none;
+      transition: border-color .2s;
+    }
+    .login-card input:focus { border-color: #2a6e18; }
+    .login-card button {
+      width: 100%; padding: 13px; background: #2a6e18; color: #fff;
+      border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: background .2s;
+    }
+    .login-card button:hover { background: #1e5212; }
+    .login-card button:disabled { background: #aaa; cursor: not-allowed; }
+    #loginError { color: #c0392b; font-size: 0.88rem; margin-top: 10px; min-height: 20px; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; }
+    header {
+      background: #2a6e18; color: #fff; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    header .brand { font-size: 1.15rem; font-weight: 700; }
+    header .user-info { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; }
+    header button.logout {
+      background: rgba(255,255,255,0.2); color: #fff; border: none;
+      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+      transition: background .2s;
+    }
+    header button.logout:hover { background: rgba(255,255,255,0.35); }
+
+    .main { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: #fff; border-radius: 12px; padding: 20px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
+    }
+    .stat-card .num { font-size: 2.4rem; font-weight: 700; color: #2a6e18; }
+    .stat-card .lbl { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
+    h2 { font-size: 1.15rem; color: #2a6e18; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+    /* ── CERERI ── */
+    .section { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 28px; }
+    .cerere-card {
+      border: 1px solid #e8e8e8; border-radius: 10px; padding: 18px 20px;
+      margin-bottom: 14px; position: relative; transition: box-shadow .2s;
+    }
+    .cerere-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .cerere-card.pending { border-left: 4px solid #f39c12; }
+    .cerere-card.confirmed { border-left: 4px solid #27ae60; opacity: 0.7; }
+    .cerere-card.rejected  { border-left: 4px solid #e74c3c; opacity: 0.6; }
+    .cerere-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+    .cerere-name { font-weight: 700; font-size: 1rem; }
+    .cerere-date { font-size: 0.82rem; color: #888; }
+    .cerere-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin: 12px 0; }
+    .cerere-details span { font-size: 0.88rem; }
+    .cerere-details strong { color: #2a6e18; }
+    .cerere-mesaj { font-size: 0.88rem; color: #555; background: #f9f9f9; padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
+    .cerere-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-confirm { background: #27ae60; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: background .2s; }
+    .btn-confirm:hover { background: #219a52; }
+    .btn-reject  { background: #e74c3c; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: background .2s; }
+    .btn-reject:hover { background: #c0392b; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .badge.pending   { background: #fef3cd; color: #856404; }
+    .badge.confirmed { background: #d4edda; color: #155724; }
+    .badge.rejected  { background: #f8d7da; color: #721c24; }
+
+    /* ── REZERVARI ── */
+    .rez-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .rez-table th { background: #f0f7ee; color: #2a6e18; padding: 10px 14px; text-align: left; font-weight: 600; }
+    .rez-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+    .rez-table tr:hover td { background: #f9f9f9; }
+    .btn-delete { background: none; border: 1px solid #e74c3c; color: #e74c3c; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 0.82rem; transition: all .2s; }
+    .btn-delete:hover { background: #e74c3c; color: #fff; }
+
+    /* ── ADD REZERVARE ── */
+    .add-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; margin-top: 16px; flex-wrap: wrap; }
+    .add-form label { font-size: 0.82rem; color: #555; display: block; margin-bottom: 4px; }
+    .add-form input, .add-form select {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #ddd; border-radius: 7px; font-size: 0.9rem; outline: none;
+    }
+    .add-form input:focus, .add-form select:focus { border-color: #2a6e18; }
+    .btn-add { background: #2a7fb8; color: #fff; border: none; padding: 10px 20px; border-radius: 7px; cursor: pointer; font-size: 0.9rem; font-weight: 600; white-space: nowrap; transition: background .2s; }
+    .btn-add:hover { background: #1e6090; }
+    .camere-check { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .camere-check label { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; cursor: pointer; }
+
+    .empty-msg { text-align: center; color: #aaa; padding: 24px; font-size: 0.95rem; }
+
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: 1fr; }
+      .add-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="logo">🏡</div>
+    <h1>Cuib de Dac</h1>
+    <p>Panou de administrare</p>
+    <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="Parolă" autocomplete="current-password">
+    <button id="loginBtn" onclick="doLogin()">Intră în cont</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard">
+  <header>
+    <span class="brand">🏡 Cuib de Dac — Admin</span>
+    <div class="user-info">
+      <span id="userEmail"></span>
+      <button class="logout" onclick="doLogout()">Ieșire</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="statCereri">—</div><div class="lbl">Cereri în așteptare</div></div>
+      <div class="stat-card"><div class="num" id="statRezervari">—</div><div class="lbl">Rezervări confirmate</div></div>
+      <div class="stat-card"><div class="num" id="statTotal">—</div><div class="lbl">Total cereri primite</div></div>
+    </div>
+
+    <!-- Cereri -->
+    <div class="section">
+      <h2>📥 Cereri de rezervare</h2>
+      <div id="cereriList"><div class="empty-msg">Se încarcă...</div></div>
+    </div>
+
+    <!-- Rezervări confirmate -->
+    <div class="section">
+      <h2>📅 Rezervări confirmate (blochează calendarul)</h2>
+      <table class="rez-table">
+        <thead><tr><th>Check-in</th><th>Check-out</th><th>Camere blocate</th><th>Acțiune</th></tr></thead>
+        <tbody id="rezTable"><tr><td colspan="4" class="empty-msg">Se încarcă...</td></tr></tbody>
+      </table>
+
+      <div style="margin-top:20px; border-top:1px solid #eee; padding-top:16px;">
+        <h2 style="margin-bottom:12px;">➕ Adaugă rezervare manuală</h2>
+        <div class="add-form">
+          <div>
+            <label>Check-in (YYYY-MM-DD)</label>
+            <input type="date" id="addCheckin">
+          </div>
+          <div>
+            <label>Check-out (YYYY-MM-DD)</label>
+            <input type="date" id="addCheckout">
+          </div>
+          <div>
+            <label>Camere blocate</label>
+            <div class="camere-check">
+              <label><input type="checkbox" value="ap"> Apartament</label>
+              <label><input type="checkbox" value="d1"> D1</label>
+              <label><input type="checkbox" value="d2"> D2</label>
+              <label><input type="checkbox" value="d3"> D3</label>
+              <label><input type="checkbox" value="d4"> D4</label>
+            </div>
+          </div>
+          <div>
+            <button class="btn-add" onclick="addRezervare()">Adaugă</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var FB_CONFIG = {
+  apiKey:            "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGU09eQ",
+  authDomain:        "cuib-de-dac.firebaseapp.com",
+  projectId:         "cuib-de-dac",
+  storageBucket:     "cuib-de-dac.firebasestorage.app",
+  messagingSenderId: "757933368413",
+  appId:             "1:757933368413:web:54fd44dfc55d734ff599b4"
+};
+
+firebase.initializeApp(FB_CONFIG);
+var auth = firebase.auth();
+var db   = firebase.firestore();
+
+// ── AUTH ──
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('userEmail').textContent = user.email;
+    listenCereri();
+    listenRezervari();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+  }
+});
+
+function doLogin() {
+  var btn = document.getElementById('loginBtn');
+  var err = document.getElementById('loginError');
+  btn.disabled = true; btn.textContent = 'Se conectează...';
+  err.textContent = '';
+  var email = document.getElementById('loginEmail').value.trim();
+  var pass  = document.getElementById('loginPass').value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(function(e) {
+      err.textContent = 'Email sau parolă incorectă.';
+      btn.disabled = false; btn.textContent = 'Intră în cont';
+    });
+}
+
+function doLogout() {
+  auth.signOut();
+}
+
+document.getElementById('loginEmail').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+document.getElementById('loginPass').addEventListener('keydown',  function(e){ if(e.key==='Enter') doLogin(); });
+
+// ── CERERI ──
+var allCereri = [];
+function listenCereri() {
+  db.collection('cereri').orderBy('timestamp', 'desc').onSnapshot(function(snap) {
+    allCereri = [];
+    snap.forEach(function(doc) { allCereri.push({ id: doc.id, ...doc.data() }); });
+    renderCereri();
+    updateStats();
+  });
+}
+
+function renderCereri() {
+  var el = document.getElementById('cereriList');
+  if (!allCereri.length) { el.innerHTML = '<div class="empty-msg">Nicio cerere primită încă.</div>'; return; }
+  el.innerHTML = allCereri.map(function(c) {
+    var ts = c.timestamp ? new Date(c.timestamp.seconds * 1000).toLocaleString('ro-RO') : '—';
+    var status = c.status || 'pending';
+    return '<div class="cerere-card ' + status + '">' +
+      '<div class="cerere-header">' +
+        '<div>' +
+          '<div class="cerere-name">' + esc(c.name || c.from_name || '—') + '</div>' +
+          '<div class="cerere-date">Primit: ' + ts + '</div>' +
+        '</div>' +
+        '<span class="badge ' + status + '">' + labelStatus(status) + '</span>' +
+      '</div>' +
+      '<div class="cerere-details">' +
+        '<span>📧 <strong>Email:</strong> ' + esc(c.email || c.from_email || '—') + '</span>' +
+        '<span>📞 <strong>Tel:</strong> ' + esc(c.telefon || '—') + '</span>' +
+        '<span>🛏️ <strong>Cameră:</strong> ' + esc(c.camera || '—') + '</span>' +
+        '<span>📅 <strong>Check-in:</strong> ' + esc(c.check_in || '—') + '</span>' +
+        '<span>📅 <strong>Check-out:</strong> ' + esc(c.check_out || '—') + '</span>' +
+        '<span>👥 <strong>Adulți:</strong> ' + (c.adulti||'—') + ' &nbsp;|&nbsp; <strong>Copii:</strong> ' + (c.copii||'0') + '</span>' +
+        '<span>🏷️ <strong>Tip:</strong> ' + esc(c.mod || 'Rezervare standard') + '</span>' +
+      '</div>' +
+      (c.mesaj && c.mesaj !== '—' ? '<div class="cerere-mesaj">💬 ' + esc(c.mesaj) + '</div>' : '') +
+      (status === 'pending' ?
+        '<div class="cerere-actions">' +
+          '<button class="btn-confirm" onclick="confirmCerere(\'' + c.id + '\')">✅ Confirmă rezervarea</button>' +
+          '<button class="btn-reject"  onclick="rejectCerere(\'' + c.id + '\')">❌ Respinge</button>' +
+        '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function labelStatus(s) {
+  if (s === 'confirmed') return '✅ Confirmată';
+  if (s === 'rejected')  return '❌ Respinsă';
+  return '⏳ În așteptare';
+}
+
+function confirmCerere(id) {
+  var c = allCereri.find(function(x){ return x.id === id; });
+  if (!c) return;
+  // Extrage codul camerei din câmpul camera
+  var camCod = camToCode(c.camera || '');
+  var checkIn  = c.check_in  || '';
+  var checkOut = c.check_out || '';
+  var batch = db.batch();
+  // Adaugă în rezervari
+  if (checkIn && checkOut && camCod.length) {
+    var rezRef = db.collection('rezervari').doc();
+    batch.set(rezRef, { s: checkIn, e: checkOut, c: camCod, sursa: 'cerere_' + id });
+  }
+  // Actualizează statusul cererii
+  batch.update(db.collection('cereri').doc(id), { status: 'confirmed' });
+  batch.commit().catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+function rejectCerere(id) {
+  if (!confirm('Respingi această cerere?')) return;
+  db.collection('cereri').doc(id).update({ status: 'rejected' })
+    .catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+function camToCode(cam) {
+  // Mapează numele afișat al camerei la codul folosit în disponibilitate
+  cam = (cam || '').toLowerCase();
+  if (cam.includes('apart')) return ['ap'];
+  if (cam.includes('d1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['d1'];
+  if (cam.includes('d2') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['d2'];
+  if (cam.includes('d3') || cam.includes('dubla 3') || cam.includes('dublă 3')) return ['d3'];
+  if (cam.includes('d4') || cam.includes('dubla 4') || cam.includes('dublă 4')) return ['d4'];
+  // Combo
+  var codes = [];
+  if (cam.includes('ap')) codes.push('ap');
+  ['d1','d2','d3','d4'].forEach(function(d){ if(cam.includes(d)) codes.push(d); });
+  return codes.length ? codes : ['ap']; // fallback
+}
+
+// ── REZERVARI ──
+function listenRezervari() {
+  db.collection('rezervari').orderBy('s').onSnapshot(function(snap) {
+    var rows = [];
+    snap.forEach(function(doc) { rows.push({ id: doc.id, ...doc.data() }); });
+    var tbody = document.getElementById('rezTable');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
+    else tbody.innerHTML = rows.map(function(r) {
+      return '<tr>' +
+        '<td>' + esc(r.s) + '</td>' +
+        '<td>' + esc(r.e) + '</td>' +
+        '<td>' + (r.c || []).join(', ') + '</td>' +
+        '<td><button class="btn-delete" onclick="deleteRezervare(\'' + r.id + '\')">Șterge</button></td>' +
+      '</tr>';
+    }).join('');
+    document.getElementById('statRezervari').textContent = rows.length;
+  });
+}
+
+function deleteRezervare(id) {
+  if (!confirm('Ștergi această rezervare? Datele vor fi deblocate în calendar.')) return;
+  db.collection('rezervari').doc(id).delete()
+    .catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+function addRezervare() {
+  var cin  = document.getElementById('addCheckin').value;
+  var cout = document.getElementById('addCheckout').value;
+  var cams = Array.from(document.querySelectorAll('.camere-check input:checked')).map(function(c){ return c.value; });
+  if (!cin || !cout || !cams.length) { alert('Completează check-in, check-out și cel puțin o cameră.'); return; }
+  if (cin >= cout) { alert('Check-out trebuie să fie după check-in.'); return; }
+  db.collection('rezervari').add({ s: cin, e: cout, c: cams })
+    .then(function() {
+      document.getElementById('addCheckin').value = '';
+      document.getElementById('addCheckout').value = '';
+      document.querySelectorAll('.camere-check input').forEach(function(i){ i.checked = false; });
+    })
+    .catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+// ── STATS ──
+function updateStats() {
+  var pending = allCereri.filter(function(c){ return (c.status||'pending') === 'pending'; }).length;
+  document.getElementById('statCereri').textContent = pending;
+  document.getElementById('statTotal').textContent  = allCereri.length;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
