@@ -128,7 +128,6 @@
     <div class="logo">🏡</div>
     <h1>Cuib de Dac</h1>
     <p>Panou de administrare</p>
-    <input type="email" id="loginEmail" placeholder="Email" autocomplete="username">
     <input type="password" id="loginPass" placeholder="Parolă" autocomplete="current-password">
     <button id="loginBtn" onclick="doLogin()">Intră în cont</button>
     <p id="loginError"></p>
@@ -211,12 +210,18 @@ firebase.initializeApp(FB_CONFIG);
 var auth = firebase.auth();
 var db   = firebase.firestore();
 
-// ── AUTH ──
+// ── AUTH (hash local + anonymous Firebase) ──
+var PASS_HASH = 'c73268030cd98fbcc86cb0843b6d0853665057e6cb117369b2923698b6e39ff3';
+
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
 auth.onAuthStateChanged(function(user) {
   if (user) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
-    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userEmail').textContent = 'Admin';
     listenCereri();
     listenRezervari();
   } else {
@@ -230,13 +235,18 @@ function doLogin() {
   var err = document.getElementById('loginError');
   btn.disabled = true; btn.textContent = 'Se conectează...';
   err.textContent = '';
-  var email = document.getElementById('loginEmail').value.trim();
-  var pass  = document.getElementById('loginPass').value;
-  auth.signInWithEmailAndPassword(email, pass)
-    .catch(function(e) {
-      err.textContent = 'Email sau parolă incorectă.';
+  var pass = document.getElementById('loginPass').value;
+  sha256(pass).then(function(hash) {
+    if (hash !== PASS_HASH) {
+      err.textContent = 'Parolă incorectă.';
+      btn.disabled = false; btn.textContent = 'Intră în cont';
+      return;
+    }
+    auth.signInAnonymously().catch(function(e) {
+      err.textContent = 'Eroare Firebase: ' + e.code;
       btn.disabled = false; btn.textContent = 'Intră în cont';
     });
+  });
 }
 
 function doLogout() {

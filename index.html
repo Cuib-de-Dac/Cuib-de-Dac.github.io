@@ -1451,12 +1451,16 @@
       .then(function() {
         // Trimite confirmare la client
         var guestParams = {
-          to_name:  params.from_name,
-          to_email: params.from_email,
-          checkin:  params.checkin,
-          checkout: params.checkout,
-          camera:   params.camera,
-          mesaj:    params.mesaj
+          name:      params.from_name,
+          email:     params.from_email,
+          check_in:  params.checkin,
+          check_out: params.checkout,
+          camera:    params.camera,
+          adulti:    params.adulti,
+          copii:     params.copii,
+          nopti:     params.nopti,
+          total:     params.total,
+          mesaj:     params.mesaj
         };
         return emailjs.send(EJS_SERVICE_ID, EJS_TPL_GUEST, guestParams);
       })
