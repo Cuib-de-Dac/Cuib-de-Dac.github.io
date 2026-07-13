@@ -1231,7 +1231,7 @@
 
   // returnează lista de combo-uri posibile (fără randare)
   function getCombosDisp(total, disp) {
-    var D=240, A=400, PL=60;
+    var D=240, A=400, PL=50;
     var avD=disp.dubles, avA=disp.ap, avPl=disp.pliante;
     var out=[];
     function duble(n){ return n===1?'1 cameră dublă':n+' camere duble'; }
@@ -1243,7 +1243,7 @@
     if(avA && total>=5 && total<=10){ var eD=Math.ceil((total-4)/2); if(eD<=avD) out.push('Apartament+'+duble(eD)); }
     if(avA && total>=11 && total<=12 && avD>=4) out.push('Apartament+4 camere duble');
     var nEco=Math.floor(total/2); var nBed=total-nEco*2;
-    if(nBed===1 && nEco<=avD && avPl>=1) out.push(duble(nEco)+'+'+pliante(1));
+    if(nBed===1 && nEco<=avD && avPl>=1 && nCopii>=1) out.push(duble(nEco)+'+'+pliante(1));
     if(total>=13 && avA && avD>=4){ var nPl=total-12; if(nPl<=avPl) out.push('Apartament+4 camere duble+'+pliante(nPl)); }
     return out;
   }
@@ -1487,7 +1487,7 @@
     var avPl = disp ? disp.pliante : 6;   // paturi pliante disponibile
 
     var opts = [];
-    var D = 240, A = 400, PL = 60;
+    var D = 240, A = 400, PL = 50;
 
     function duble(n)   { return n === 1 ? '1 cameră dublă' : n + ' camere duble'; }
     function pliante(n) { return n === 1 ? '1 pat pliant'   : n + ' paturi pliante'; }
@@ -1508,8 +1508,8 @@
         note: '2 dormitoare (unul de trecere) — ideal pentru familii', val: 'Apartament familial' });
     }
 
-    // 2b. Apartament + paturi pliante (5–6 pers, fără camere duble extra)
-    if (avA && total >= 5 && total <= 6) {
+    // 2b. Apartament + paturi pliante (5–6 pers, fără camere duble extra — doar cu copil)
+    if (avA && total >= 5 && total <= 6 && nCopii >= 1) {
       var nPlAp = total - 4; // 1 sau 2 paturi pliante
       if (nPlAp <= 2 && nPlAp <= avPl) {
         opts.push({ label: 'Apartament familial + ' + pliante(nPlAp), price: fmt(A + nPlAp * PL),
@@ -1540,19 +1540,19 @@
       if (nPl <= avPl) {
         opts.push({ label: 'Apartament + 4 camere duble + ' + pliante(nPl), price: fmt(A + 4 * D + nPl * PL),
           tag: 'Capacitate maximă', tagCls: 'tag-rec',
-          note: 'Întreg pensiunea · ' + nPl + ' pat' + (nPl > 1 ? 'uri pliante' : ' pliant') + ' (60 lei/noapte fiecare)',
+          note: 'Întreg pensiunea · ' + nPl + ' pat' + (nPl > 1 ? 'uri pliante' : ' pliant') + ' (50 lei/noapte fiecare)',
           val: 'Apartament + 4 camere duble + ' + pliante(nPl) });
       }
     }
 
-    // 5. Economic: paturi pliante în loc de cameră (total impar)
-    if (total >= 3 && total <= 9) {
+    // 5. Economic: paturi pliante în loc de cameră (total impar — doar cu copil)
+    if (total >= 3 && total <= 9 && nCopii >= 1) {
       var nEco = Math.floor(total / 2);
       var nBed = total - nEco * 2;
       if (nBed === 1 && nEco >= 1 && nEco <= avD && avPl >= 1) {
         var ecoVal = duble(nEco) + ' + ' + pliante(1);
         opts.push({ label: ecoVal, price: fmt(nEco * D + PL), tag: 'Economic', tagCls: 'tag-eco',
-          note: 'Pat pliant: 60 lei/noapte · Disponibil oricui, ideal pentru un copil', val: ecoVal });
+          note: 'Pat pliant: 50 lei/noapte · Rezervat copiilor (2 adulți + 1 copil)', val: ecoVal });
       }
     }
 
@@ -1607,7 +1607,7 @@
     if (tot > 12) {
       var nPl = Math.min(6, tot - 12);
       noteEl.innerHTML = '<div class="capacity-warning" style="margin-top:12px;"><span class="warn-icon">ℹ️</span>' +
-        '<span>Pentru grupuri de peste 12 persoane sunt disponibile <strong>până la 6 paturi pliante</strong> suplimentare (câte unul per cameră), la <strong>60 lei/noapte</strong> fiecare. ' +
+        '<span>Pentru grupuri de peste 12 persoane sunt disponibile <strong>până la 6 paturi pliante</strong> suplimentare (câte unul per cameră), la <strong>50 lei/noapte</strong> fiecare. ' +
         'Pentru grupul dvs. de ' + tot + ' persoane vor fi necesare <strong>' + nPl + ' paturi pliante</strong>.</span></div>';
       noteEl.style.display = '';
     } else {
