@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuib de Dac — Pensiune Baia de Fier, Gorj</title>
+  <meta name="description" content="Pensiunea Cuib de Dac din Baia de Fier, Gorj. Cazare lângă Peștera Muierilor și traseele montane din Munții Parâng. Rezervări: 0785 612 368.">
+  <meta property="og:title" content="Cuib de Dac — Pensiune Baia de Fier">
+  <meta property="og:description" content="Cazare la munte lângă Peștera Muierilor, Munții Parâng, Gorj.">
+  <meta name="theme-color" content="#f5f8f2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/ro.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── Paleta principală: 3 culori distincte ── */
+      --forest:    #2a6e18;   /* verde pădure — structural */
+      --forest-lt: #3d8824;
+      --forest-dim:#dff0d2;   /* verde-mint deschis pentru fonduri */
+
+      --sky:       #2a7fb8;   /* albastru munte */
+      --sky-lt:    #4498d0;
+      --sky-dim:   #dceef8;   /* albastru-cer deschis pentru fonduri */
+
+      --amber:     #c07010;   /* auriu-amber — CTA & accente */
+      --amber-lt:  #d88820;
+      --amber-dim: #faecd4;   /* crem-auriu deschis pentru fonduri */
+
+      /* ── Fonduri secțiuni (variate!) ── */
+      --bg:        #fafaf6;   /* alb cald */
+      --bg-green:  #f2f9ea;   /* mint verde */
+      --bg-sky:    #ebf5fc;   /* cer albastru */
+      --bg-amber:  #fdf6ea;   /* crem-auriu */
+
+      /* ── Text ── */
+      --text:      #1c3a12;   /* verde-pădure închis */
+      --text2:     #3a5828;
+      --muted:     #6a8458;
+
+      /* ── UI ── */
+      --border:    rgba(28,58,18,0.10);
+      --shadow:    0 2px 14px rgba(28,58,18,0.07);
+      --shadow-md: 0 6px 28px rgba(28,58,18,0.12);
+      --radius:    14px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; font-weight: 600; line-height: 1.25; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ══════════════════════════════════════
+       NAV — mereu deschis, cu umbră subtilă
+    ══════════════════════════════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 1.25rem;
+      background: rgba(250,250,246,0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 12px rgba(28,58,18,0.06);
+    }
+    .nav-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 62px;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-icon   { width: 36px; height: 36px; border-radius: 9px; overflow: hidden; flex-shrink: 0; }
+    .nav-brand span {
+      font-family: 'Playfair Display', serif; font-size: 17px;
+      color: var(--text); font-weight: 600;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      font-size: 13px; color: var(--muted); padding: 6px 12px;
+      border-radius: var(--radius-sm); transition: color 0.18s, background 0.18s;
+    }
+    .nav-links a:hover { color: var(--text); background: var(--bg-green); }
+    .nav-cta {
+      font-size: 13px; font-weight: 600;
+      background: var(--amber); color: #fff;
+      padding: 8px 18px; border-radius: var(--radius-sm);
+      border: none; cursor: pointer; transition: background 0.18s, transform 0.12s;
+    }
+    .nav-cta:hover { background: var(--amber-lt); transform: translateY(-1px); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px;
+    }
+    .hamburger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    .mobile-menu {
+      display: none; flex-direction: column;
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 1rem 1.25rem; gap: 4px;
+    }
+    .mobile-menu a {
+      font-size: 15px; color: var(--muted); padding: 10px 12px;
+      border-radius: var(--radius-sm); transition: color 0.18s, background 0.18s;
+    }
+    .mobile-menu a:hover { color: var(--text); background: var(--bg-green); }
+    .mobile-menu.open { display: flex; }
+
+    /* ══════════════════════════════════════
+       HERO — peisaj diurn, colorat
+    ══════════════════════════════════════ */
+    .hero {
+      min-height: 100svh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      position: relative; overflow: hidden;
+      padding: 0 1.25rem 4rem;
+    }
+    .hero-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(18,46,10,0.90) 0%,
+        rgba(18,46,10,0.50) 38%,
+        rgba(18,46,10,0.08) 68%,
+        transparent 100%
+      );
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 960px; margin: 0 auto; width: 100%; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.10em;
+      text-transform: uppercase; color: #f8d878;
+      margin-bottom: 1.1rem;
+    }
+    .hero-eyebrow::before { content:''; width:28px; height:1px; background:#f8d878; }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 7vw, 4.8rem);
+      color: #fff; margin-bottom: 1rem; max-width: 660px;
+    }
+    .hero h1 em { color: #7dd85e; font-style: normal; }
+
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 17px);
+      color: rgba(255,255,255,0.82); max-width: 500px;
+      margin-bottom: 2.2rem; line-height: 1.75;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    .btn-main {
+      background: var(--amber); color: #fff;
+      padding: 13px 30px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+      transition: background 0.18s, transform 0.12s; display: inline-block;
+    }
+    .btn-main:hover { background: var(--amber-lt); transform: translateY(-1px); }
+
+    .btn-ghost {
+      color: rgba(255,255,255,0.78); font-size: 14px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 13px 0; border: none; background: none; cursor: pointer;
+      transition: color 0.18s;
+    }
+    .btn-ghost:hover { color: #fff; }
+    .btn-ghost::after { content:'→'; transition: transform 0.18s; }
+    .btn-ghost:hover::after { transform: translateX(3px); }
+
+    .hero-stats { margin-top: 2.5rem; display: flex; gap: 2.5rem; flex-wrap: wrap; }
+    .hero-stat-n { font-family:'Playfair Display',serif; font-size:2rem; color:#fff; }
+    .hero-stat-l { font-size:12px; color:rgba(255,255,255,0.50); margin-top:2px; }
+
+    .scroll-hint {
+      position: absolute; bottom: 1.5rem; right: 1.5rem; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      animation: bounce 2.2s infinite;
+    }
+    .scroll-hint span { font-size:11px; color:rgba(255,255,255,0.4); letter-spacing:0.08em; text-transform:uppercase; }
+    .scroll-arrow { width:1px; height:40px; background:linear-gradient(to bottom, transparent, #7dd85e); }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+    /* ══════════════════════════════════════
+       LAYOUT SECȚIUNI
+    ══════════════════════════════════════ */
+    .section      { padding:5rem 1.25rem; max-width:960px; margin:0 auto; }
+    .section-full { padding:5rem 1.25rem; }
+    .section-full .inner { max-width:960px; margin:0 auto; }
+
+    /* Fonduri variate pentru section-full */
+    .section-full.bg-green  { background: var(--bg-green); }
+    .section-full.bg-sky    { background: var(--bg-sky); }
+    .section-full.bg-amber  { background: var(--bg-amber); }
+
+    .eyebrow {
+      font-size:11px; font-weight:500; letter-spacing:0.12em;
+      text-transform:uppercase; color: var(--sky);
+      display:inline-flex; align-items:center; gap:8px;
+      margin-bottom:0.7rem;
+    }
+    .eyebrow::before { content:''; width:20px; height:1px; background:var(--sky); }
+    /* Culori eyebrow variate per secțiune */
+    .bg-green  .eyebrow,  .sec-green .eyebrow  { color:var(--forest);  }
+    .bg-green  .eyebrow::before, .sec-green .eyebrow::before { background:var(--forest); }
+    .bg-amber  .eyebrow,  .sec-amber .eyebrow  { color:var(--amber);   }
+    .bg-amber  .eyebrow::before, .sec-amber .eyebrow::before { background:var(--amber);  }
+
+    h2 { font-size:clamp(1.6rem,4vw,2.4rem); color:var(--text); margin-bottom:0.6rem; }
+    .lead { font-size:15px; color:var(--muted); max-width:520px; margin-bottom:2.5rem; line-height:1.7; }
+
+    /* ── ZONE GRID ── */
+    .zones-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .zone-card {
+      border-radius:var(--radius); overflow:hidden;
+      border:1px solid var(--border); background:var(--bg);
+      box-shadow:var(--shadow); transition:transform 0.2s,box-shadow 0.2s;
+    }
+    .zone-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+    .zone-card svg { width:100%; display:block; }
+    .zone-info { padding:14px 16px; }
+    .zone-info h3 { font-size:15px; color:var(--text); margin-bottom:4px; font-family:'Playfair Display',serif; font-weight:600; }
+    .zone-info p  { font-size:13px; color:var(--muted); line-height:1.5; }
+
+    /* ── ATRACȚII ── */
+    .attr-list {
+      display:flex; flex-direction:column; gap:1px;
+      border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; box-shadow:var(--shadow);
+    }
+    .attr-row {
+      display:flex; gap:1.2rem; align-items:flex-start;
+      padding:1.3rem 1.5rem; background:white; transition:background 0.18s;
+    }
+    .attr-row:hover { background:var(--bg-green); }
+    .attr-num {
+      font-family:'Playfair Display',serif; font-size:1.5rem;
+      color:var(--forest-dim); min-width:36px; line-height:1; padding-top:3px;
+      /* Recolored below */
+    }
+    .attr-num { color:var(--forest); opacity:0.35; }
+    .attr-body h3 { font-size:15px; color:var(--text); margin-bottom:4px; font-family:'Inter',sans-serif; font-weight:500; }
+    .attr-body p  { font-size:13px; color:var(--muted); line-height:1.6; }
+    .attr-tag {
+      margin-left:auto; flex-shrink:0;
+      font-size:11px; font-weight:500;
+      color:var(--sky); background:var(--sky-dim);
+      padding:3px 11px; border-radius:20px;
+      align-self:flex-start; margin-top:4px;
+      border:1px solid rgba(42,127,184,0.18);
+    }
+
+    /* ── WHITE WOLF ── */
+    .wolf-block {
+      border:1px solid var(--border); border-radius:var(--radius);
+      padding:2rem; background:white; box-shadow:var(--shadow);
+      display:grid; grid-template-columns:auto 1fr; gap:1.5rem; align-items:start;
+    }
+    .wolf-icon-wrap {
+      width:56px; height:56px; border-radius:var(--radius-sm);
+      background:var(--bg-green); border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:28px; flex-shrink:0;
+    }
+    .wolf-block h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--text); margin-bottom:8px; }
+    .wolf-block p  { font-size:14px; color:var(--muted); line-height:1.7; }
+    .wolf-badge {
+      display:inline-block; margin-top:12px;
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--border); padding:4px 12px; border-radius:20px;
+    }
+
+    /* ── CAMERE ── */
+    .rooms-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .room-card {
+      border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; background:white; box-shadow:var(--shadow);
+      transition:box-shadow 0.2s,transform 0.2s;
+    }
+    .room-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .room-top { height:5px; }
+    .room-card:nth-child(1) .room-top { background:var(--forest); }
+    .room-card:nth-child(2) .room-top { background:var(--sky); }
+    .room-body { padding:1.5rem; }
+    .room-body h3 { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--text); margin-bottom:8px; }
+    .room-body p  { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:1.2rem; }
+    .room-price   { font-family:'Playfair Display',serif; font-size:1.9rem; color:var(--forest); }
+    .room-price span { font-size:13px; font-family:'Inter',sans-serif; color:var(--muted); }
+    .room-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:1rem; }
+    .room-tag {
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--border); padding:4px 10px;
+      border-radius:20px; background:var(--bg);
+    }
+
+    /* ── REZERVARE ── */
+    .form-wrap {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow);
+    }
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-group.full { grid-column:1/-1; }
+    label { font-size:12px; font-weight:500; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; }
+    input,select,textarea {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:11px 14px;
+      font-size:14px; color:var(--text); font-family:'Inter',sans-serif;
+      outline:none; transition:border-color 0.18s,box-shadow 0.18s; width:100%;
+    }
+    input::placeholder, textarea::placeholder { color:var(--muted); opacity:0.55; }
+    input:focus,select:focus,textarea:focus {
+      border-color:var(--forest);
+      box-shadow:0 0 0 3px rgba(42,110,24,0.10);
+    }
+    select option { background:#fff; }
+    textarea { resize:vertical; min-height:90px; }
+    .btn-submit {
+      width:100%; padding:14px; margin-top:6px;
+      background:var(--forest); color:#fff; border:none;
+      border-radius:var(--radius-sm); font-size:15px; font-weight:600;
+      cursor:pointer; transition:background 0.18s,transform 0.12s;
+      font-family:'Inter',sans-serif;
+    }
+    .btn-submit:hover { background:var(--forest-lt); transform:translateY(-1px); }
+    .form-note { font-size:12px; color:var(--muted); text-align:center; margin-top:10px; }
+    /* Flatpickr — temă personalizată */
+    .flatpickr-calendar { font-family:'Inter',sans-serif; border-radius:var(--radius); box-shadow:var(--shadow-md); border:1.5px solid var(--border); }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background:var(--forest) !important; border-color:var(--forest) !important; }
+    .flatpickr-day.inRange { background:var(--forest-dim) !important; border-color:var(--forest-dim) !important; color:var(--forest) !important; }
+    .flatpickr-day:hover { background:var(--bg-green); border-color:var(--forest-lt); }
+    .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover { background:#fee2e2 !important; color:#ef4444 !important; border-color:transparent !important; text-decoration:line-through; cursor:not-allowed; }
+    .flatpickr-months .flatpickr-month, .flatpickr-monthDropdown-months { background:var(--forest); color:#fff; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months { color:#fff; }
+    .flatpickr-weekday { color:var(--muted); }
+    input.flatpickr-input { background:#fff; }
+    /* Mesaj disponibilitate */
+    .avail-msg { border-radius:var(--radius-sm); padding:14px 16px; font-size:13px; line-height:1.5; display:flex; gap:10px; align-items:flex-start; margin-top:4px; }
+    .avail-msg.avail-ok  { background:#f0fdf4; border:1.5px solid #86efac; color:#166534; }
+    .avail-msg.avail-err { background:#fef2f2; border:1.5px solid #fca5a5; color:#991b1b; }
+    .avail-msg.avail-warn{ background:#fffbeb; border:1.5px solid #fcd34d; color:#92400e; }
+    .avail-msg-icon { font-size:18px; flex-shrink:0; }
+    .stepper { display:flex; align-items:center; gap:0; border:1.5px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; background:#fff; width:fit-content; height:44px; }
+    .stepper-btn { width:44px; height:44px; border:none; background:none; cursor:pointer; font-size:22px; font-weight:300; color:var(--forest); display:flex; align-items:center; justify-content:center; transition:background .15s; flex-shrink:0; }
+    .stepper-btn:hover { background:var(--forest-dim); }
+    .stepper-btn:active { background:var(--border); }
+    .stepper-btn:disabled { color:var(--muted); cursor:not-allowed; background:none; }
+    .stepper-val { min-width:52px; text-align:center; font-size:16px; font-weight:600; color:var(--text); border-left:1.5px solid var(--border); border-right:1.5px solid var(--border); height:100%; line-height:44px; }
+    .stepper-note { font-size:11px; color:var(--amber); margin-top:5px; min-height:16px; font-style:italic; }
+    .capacity-warning { background:#fff8ec; border:1.5px solid #f0c060; border-radius:var(--radius-sm); padding:12px 16px; font-size:13px; color:#7a4e00; line-height:1.5; display:flex; gap:10px; align-items:flex-start; }
+    .capacity-warning .warn-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+    /* Toggle Rezervare / TB */
+    .rez-toggle { display:flex; gap:0; background:var(--bg-green); border-radius:var(--radius-sm); padding:4px; margin-bottom:24px; }
+    .rez-tab { flex:1; padding:10px 16px; border:none; background:none; border-radius:6px; font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; transition:all .2s; }
+    .rez-tab.active { background:#fff; color:var(--forest); box-shadow:0 1px 6px rgba(0,0,0,.08); font-weight:600; }
+    /* Combo cards */
+    .combo-list { display:flex; flex-direction:column; gap:8px; }
+    .tb-notice { display:flex; gap:10px; align-items:flex-start; background:#eff6ff; border:1.5px solid #93c5fd; border-radius:var(--radius-sm); padding:12px 14px; font-size:13px; color:#1e40af; line-height:1.5; margin-bottom:16px; }
+    .tb-notice-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+    .combo-card { border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px 16px; cursor:pointer; display:flex; align-items:flex-start; gap:12px; transition:all .18s; background:#fff; }
+    .combo-card:hover { border-color:var(--forest); background:var(--bg-green); }
+    .combo-card.selected { border-color:var(--forest); background:var(--forest-dim); }
+    .combo-card input[type=radio] { accent-color:var(--forest); width:17px; height:17px; flex-shrink:0; cursor:pointer; margin-top:3px; }
+    .combo-info { flex:1; min-width:0; }
+    .combo-label { font-weight:600; color:var(--text); font-size:14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+    .combo-note { font-size:12px; color:var(--muted); margin-top:4px; line-height:1.4; }
+    .combo-tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
+    .tag-rec  { background:var(--forest-dim); color:var(--forest); }
+    .tag-spa  { background:var(--sky-dim);    color:var(--sky); }
+    .tag-eco  { background:var(--amber-dim);  color:var(--amber); }
+    .combo-card.selected .tag-rec { background:var(--forest); color:#fff; }
+    .combo-card.selected .tag-spa { background:var(--sky);    color:#fff; }
+    .combo-card.selected .tag-eco { background:var(--amber);  color:#fff; }
+    .combo-price { font-size:13px; font-weight:600; color:var(--forest); white-space:nowrap; padding-top:2px; flex-shrink:0; }
+    .success-box { display:none; text-align:center; padding:2.5rem 1rem; }
+    .success-box .checkmark { font-size:3rem; margin-bottom:1rem; }
+    .success-box h3 { font-size:1.3rem; color:var(--forest); margin-bottom:.5rem; }
+    .success-box p  { font-size:14px; color:var(--muted); }
+
+    /* ── CONTACT ── */
+    .contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .contact-card {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.4rem; box-shadow:var(--shadow);
+      display:flex; gap:14px; align-items:flex-start;
+      transition:box-shadow 0.2s,transform 0.2s;
+    }
+    .contact-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .contact-icon {
+      width:42px; height:42px; border-radius:var(--radius-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px; flex-shrink:0;
+    }
+    .contact-card:nth-child(1) .contact-icon { background:#fce8e6; }
+    .contact-card:nth-child(2) .contact-icon { background:var(--bg-green); }
+    .contact-card:nth-child(3) .contact-icon { background:var(--bg-sky); }
+    .contact-card:nth-child(4) .contact-icon { background:var(--bg-amber); }
+    .contact-card h4 { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:4px; }
+    .contact-card p  { font-size:14px; color:var(--text); font-weight:500; }
+    .contact-card a  { color:var(--sky); }
+
+    /* ── CTA BANNER ── */
+    .cta-wrap { padding:0 1.25rem; }
+    .cta-banner {
+      max-width:960px; margin:3rem auto;
+      background:linear-gradient(135deg, var(--forest) 0%, #3a8824 100%);
+      border-radius:var(--radius); padding:2.5rem 3rem;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:1.5rem; flex-wrap:wrap;
+      box-shadow:0 8px 32px rgba(42,110,24,0.22);
+    }
+    .cta-banner h2 { font-size:1.6rem; color:#fff; margin-bottom:4px; }
+    .cta-banner p  { font-size:14px; color:rgba(255,255,255,0.72); }
+    .btn-cta {
+      background:#fff; color:var(--forest);
+      padding:13px 30px; border-radius:var(--radius-sm);
+      font-size:14px; font-weight:700;
+      transition:background 0.18s,transform 0.12s;
+      display:inline-block; white-space:nowrap;
+    }
+    .btn-cta:hover { background:#f0fae8; transform:translateY(-1px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background:var(--bg-green);
+      border-top:1px solid var(--border);
+      padding:2.5rem 1.25rem; text-align:center;
+    }
+    .foot-logo  { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:8px; }
+    .foot-brand { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--text); }
+    footer p    { font-size:13px; color:var(--muted); }
+    footer a    { color:var(--forest); }
+    .foot-divider { width:40px; height:1px; background:var(--border); margin:1rem auto; }
+
+    /* ── SOCIAL MEDIA ── */
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .social-card {
+      display: flex; align-items: center; gap: 14px;
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.1rem 1.3rem;
+      box-shadow: var(--shadow); cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+      text-decoration: none; color: var(--text);
+    }
+    .social-card:not(.social-soon):hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .social-card.social-soon { opacity: 0.6; cursor: default; }
+
+    .social-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 0;
+    }
+    .social-fb .social-icon { background: #1877f2; color: #fff; }
+    .social-ig .social-icon { background: linear-gradient(135deg,#f58529,#dd2a7b,#8134af); color: #fff; }
+    .social-tt .social-icon { background: #010101; color: #fff; }
+    .social-gmb .social-icon { background: #34a853; color: #fff; }
+
+    .social-info { flex: 1; min-width: 0; }
+    .social-name   { font-weight: 600; font-size: 15px; color: var(--text); }
+    .social-handle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .social-arrow { font-size: 18px; color: var(--muted); flex-shrink: 0; }
+    .social-fb:hover .social-arrow { color: #1877f2; }
+
+    .social-badge {
+      font-size: 11px; font-weight: 500;
+      background: var(--bg-amber); color: var(--amber);
+      padding: 3px 9px; border-radius: 20px;
+      border: 1px solid rgba(192,112,16,0.2);
+      flex-shrink: 0; white-space: nowrap;
+    }
+
+    @media (max-width: 580px) {
+      .social-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── DIVIDER ── */
+    .divider { border:none; border-top:1px solid var(--border); margin:0; }
+
+    /* ══════════════════════════════════════
+       MOBILE
+    ══════════════════════════════════════ */
+    @media (max-width:680px) {
+      .nav-links,.nav-cta { display:none; }
+      .hamburger { display:flex; }
+      .hero { padding-bottom:3rem; }
+      .hero-stats { gap:1.5rem; }
+      .scroll-hint { display:none; }
+      .zones-grid { grid-template-columns:1fr; gap:10px; }
+      .attr-row { flex-wrap:wrap; }
+      .attr-tag { margin-left:0; margin-top:6px; }
+      .wolf-block { grid-template-columns:1fr; }
+      .wolf-icon-wrap { width:44px; height:44px; font-size:22px; }
+      .rooms-grid { grid-template-columns:1fr; }
+      .form-grid { grid-template-columns:1fr; }
+      .form-group.full { grid-column:1; }
+      .contact-grid { grid-template-columns:1fr; }
+      .cta-banner { text-align:center; justify-content:center; padding:2rem 1.5rem; }
+      .section { padding:3.5rem 1.25rem; }
+      .section-full { padding:3.5rem 1.25rem; }
+    }
+    @media (max-width:400px) { .hero h1 { font-size:2.1rem; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="9" fill="#f2f9ea"/>
+          <!-- Brazi -->
+          <polygon points="8,28 13,13 18,28"  fill="#2a6e18"/>
+          <polygon points="14,28 20,8  26,28"  fill="#3d8824"/>
+          <polygon points="22,28 26,17 30,28" fill="#2a6e18"/>
+          <!-- Arc cuib — auriu -->
+          <path d="M4,29 Q18,20 32,29" stroke="#c07010" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <path d="M6,31 Q18,24 30,31" stroke="#f8c030" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <!-- Soare mic sus-dreapta -->
+          <circle cx="28" cy="9" r="4"   fill="#f8c030" opacity="0.3"/>
+          <circle cx="28" cy="9" r="2.5" fill="#f8c030"/>
+        </svg>
+      </div>
+      <span>Cuib de Dac</span>
+    </div>
+    <div class="nav-links">
+      <a href="#zona">Zona</a>
+      <a href="#cazare">Cazare</a>
+      <a href="activitati.html">Activități</a>
+      <a href="#rezervare">Rezervare</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#rezervare" class="nav-cta">Rezervă acum</a>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Meniu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#zona"           onclick="closeMenu()">Zona</a>
+    <a href="#cazare"         onclick="closeMenu()">Cazare</a>
+    <a href="activitati.html" onclick="closeMenu()">Activități</a>
+    <a href="#rezervare"      onclick="closeMenu()">Rezervare</a>
+    <a href="#contact"        onclick="closeMenu()">Contact</a>
+    <a href="tel:0785612368" style="color:var(--amber);font-weight:600;margin-top:4px;">📞 0785 612 368</a>
+  </div>
+</nav>
+
+<!-- HERO — peisaj de zi, colorat -->
+<section class="hero" id="hero">
+  <svg class="hero-scene" viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#4a9fd8"/>
+        <stop offset="55%"  stop-color="#82c4ea"/>
+        <stop offset="100%" stop-color="#c2e4f5"/>
+      </linearGradient>
+      <linearGradient id="meadowGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"   stop-color="#5ab828"/>
+        <stop offset="100%" stop-color="#3a9018"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Cer albastru -->
+    <rect width="1200" height="700" fill="url(#skyGrad)"/>
+
+    <!-- Soare -->
+    <circle cx="980" cy="110" r="80" fill="#f8e060" opacity="0.15"/>
+    <circle cx="980" cy="110" r="55" fill="#f8dc40" opacity="0.20"/>
+    <circle cx="980" cy="110" r="36" fill="#f8d020"/>
+    <!-- Raze de soare -->
+    <line x1="980" y1="62"  x2="980" y2="48"  stroke="#f8d020" stroke-width="3" opacity="0.5"/>
+    <line x1="1020" y1="72" x2="1032" y2="62" stroke="#f8d020" stroke-width="3" opacity="0.5"/>
+    <line x1="1028" y1="110" x2="1044" y2="110" stroke="#f8d020" stroke-width="3" opacity="0.5"/>
+    <line x1="940" y1="72"  x2="928"  y2="62"  stroke="#f8d020" stroke-width="3" opacity="0.5"/>
+    <line x1="932" y1="110" x2="916"  y2="110" stroke="#f8d020" stroke-width="3" opacity="0.5"/>
+
+    <!-- Nori -->
+    <ellipse cx="180" cy="85"  rx="130" ry="40" fill="white" opacity="0.72"/>
+    <ellipse cx="240" cy="70"  rx="90"  ry="32" fill="white" opacity="0.78"/>
+    <ellipse cx="130" cy="95"  rx="70"  ry="26" fill="white" opacity="0.60"/>
+
+    <ellipse cx="620" cy="62"  rx="110" ry="32" fill="white" opacity="0.65"/>
+    <ellipse cx="680" cy="50"  rx="75"  ry="26" fill="white" opacity="0.70"/>
+    <ellipse cx="570" cy="72"  rx="60"  ry="22" fill="white" opacity="0.55"/>
+
+    <!-- Munți depărtați — alb-albăstrui, cu zăpadă -->
+    <polygon points="0,360 120,170 240,300 400,110 560,270 720,90 880,240 1040,100 1200,220 1200,700 0,700"
+             fill="#90aec8" opacity="0.45"/>
+    <!-- Vârfuri zăpadă -->
+    <polygon points="400,110 425,158 375,158" fill="white" opacity="0.55"/>
+    <polygon points="720,90  746,140 694,140" fill="white" opacity="0.55"/>
+    <polygon points="1040,100 1066,150 1014,150" fill="white" opacity="0.55"/>
+    <polygon points="120,170 142,208 98,208"  fill="white" opacity="0.40"/>
+
+    <!-- Munți de mijloc — verde-albastru -->
+    <polygon points="0,440 90,270 200,380 360,210 520,360 680,200 840,350 1000,210 1140,350 1200,300 1200,700 0,700"
+             fill="#4a8840" opacity="0.85"/>
+
+    <!-- Munți apropiați — verde bogat -->
+    <polygon points="0,520 80,360 200,460 360,290 520,430 680,280 840,430 1000,300 1140,440 1200,370 1200,700 0,700"
+             fill="#3d8824"/>
+
+    <!-- Pădure intermediară -->
+    <polygon points="0,590 70,490 150,560 250,470 360,560 480,460 600,560 720,460 840,560 960,460 1080,560 1200,480 1200,700 0,700"
+             fill="#2a6e18"/>
+
+    <!-- Pajiște față -->
+    <rect x="0" y="640" width="1200" height="60" fill="url(#meadowGrad)"/>
+
+    <!-- Flori de pajiște -->
+    <circle cx="120"  cy="648" r="5" fill="#f8e060" opacity="0.85"/>
+    <circle cx="135"  cy="653" r="3" fill="#ff8c8c" opacity="0.80"/>
+    <circle cx="280"  cy="645" r="4" fill="white"   opacity="0.80"/>
+    <circle cx="310"  cy="651" r="5" fill="#f8e060" opacity="0.85"/>
+    <circle cx="480"  cy="647" r="4" fill="#ff8c8c" opacity="0.80"/>
+    <circle cx="510"  cy="653" r="3" fill="white"   opacity="0.75"/>
+    <circle cx="660"  cy="644" r="5" fill="#f8e060" opacity="0.85"/>
+    <circle cx="690"  cy="650" r="4" fill="#ff8c8c" opacity="0.80"/>
+    <circle cx="860"  cy="647" r="3" fill="white"   opacity="0.80"/>
+    <circle cx="880"  cy="643" r="5" fill="#f8e060" opacity="0.85"/>
+    <circle cx="1040" cy="649" r="4" fill="#ff8c8c" opacity="0.80"/>
+    <circle cx="1080" cy="644" r="5" fill="#f8e060" opacity="0.85"/>
+  </svg>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Baia de Fier · Gorj · Munții Parâng</div>
+    <h1>Cuibul tău<br>în <em>inima munților</em></h1>
+    <p class="hero-sub">Vino să te odihnești la poalele Parângului. Aer curat, liniște adevărată și priveliști care îți rămân în suflet — te așteptăm cu brațele deschise.</p>
+    <div class="hero-actions">
+      <a href="#rezervare" class="btn-main">Rezervă o cameră</a>
+      <a href="#zona" class="btn-ghost">Descoperă zona</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-n">4 km</div>
+        <div class="hero-stat-l">Peștera Muierilor</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-n">240 lei</div>
+        <div class="hero-stat-l">cameră / noapte</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-n">10+</div>
+        <div class="hero-stat-l">trasee montane</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-arrow"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ZONA — fond alb -->
+<section class="section" id="zona">
+  <div class="eyebrow" style="color:var(--sky)">Împrejurimi</div>
+  <h2>Baia de Fier din priviri</h2>
+  <p class="lead">Trei dintre cele mai frumoase fețe ale zonei — peșteră, munte și adrenalină.</p>
+  <div class="zones-grid">
+
+    <div class="zone-card">
+      <svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="340" height="200" fill="#04342C"/>
+        <ellipse cx="170" cy="130" rx="160" ry="95" fill="#085041"/>
+        <ellipse cx="120" cy="115" rx="75"  ry="52" fill="#0F6E56" opacity="0.8"/>
+        <ellipse cx="220" cy="108" rx="65"  ry="46" fill="#0F6E56" opacity="0.7"/>
+        <rect x="90" y="100" width="160" height="100" fill="#04342C" rx="8"/>
+        <ellipse cx="170" cy="100" rx="90" ry="32" fill="#085041"/>
+        <rect x="145" y="120" width="50" height="80" fill="#0F6E56" rx="4"/>
+        <rect x="118" y="108" width="26" height="38" fill="#1D9E75" opacity="0.55" rx="3"/>
+        <rect x="196" y="112" width="26" height="34" fill="#1D9E75" opacity="0.45" rx="3"/>
+        <rect x="155" y="100" width="3" height="18" fill="#f8e060" opacity="0.3" rx="1"/>
+        <rect x="170" y="100" width="3" height="22" fill="#f8e060" opacity="0.3" rx="1"/>
+        <rect x="185" y="100" width="3" height="15" fill="#f8e060" opacity="0.3" rx="1"/>
+      </svg>
+      <div class="zone-info">
+        <h3>Peștera Muierilor</h3>
+        <p>Stalactite, stalagmite și coloane spectaculoase, tururi ghidate. La 4 km de pensiune.</p>
+      </div>
+    </div>
+
+    <div class="zone-card">
+      <svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="zoneSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#4a9fd8"/>
+            <stop offset="100%" stop-color="#a8d8f0"/>
+          </linearGradient>
+        </defs>
+        <rect width="340" height="200" fill="url(#zoneSky)"/>
+        <circle cx="280" cy="38" r="28" fill="#f8d020" opacity="0.9"/>
+        <!-- Munți cu zăpadă -->
+        <polygon points="0,140 60,50 120,120 200,35 280,110 340,70 340,200 0,200" fill="#5a9050"/>
+        <polygon points="0,155 80,90 150,140 230,75 310,130 340,110 340,200 0,200" fill="#3d7a30"/>
+        <polygon points="0,170 90,130 170,160 260,120 340,150 340,200 0,200"       fill="#2a6018"/>
+        <polygon points="200,35 215,55 185,55" fill="white" opacity="0.7"/>
+        <polygon points="60,50 75,72 45,72"    fill="white" opacity="0.6"/>
+      </svg>
+      <div class="zone-info">
+        <h3>Munții Parâng</h3>
+        <p>Trasee marcate, peisaje alpine, vârfuri la peste 2400m altitudine.</p>
+      </div>
+    </div>
+
+    <div class="zone-card">
+      <svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="340" height="200" fill="#e8ddd0"/>
+        <rect x="0" y="130" width="340" height="70" fill="#c8b898"/>
+        <polygon points="20,130 70,42 120,130"  fill="#8a7860"/>
+        <polygon points="100,130 165,25 230,130" fill="#9a8870"/>
+        <polygon points="210,130 265,48 320,130" fill="#8a7860"/>
+        <line x1="70"  y1="42" x2="70"  y2="130" stroke="#c0392b" stroke-width="3.5"/>
+        <line x1="165" y1="25" x2="165" y2="130" stroke="#c0392b" stroke-width="3.5"/>
+        <line x1="265" y1="48" x2="265" y2="130" stroke="#c0392b" stroke-width="3.5"/>
+        <line x1="55"  y1="80"  x2="115" y2="68"  stroke="#6a5a48" stroke-width="2.2"/>
+        <line x1="118" y1="66"  x2="210" y2="58"  stroke="#6a5a48" stroke-width="2.2"/>
+        <line x1="208" y1="60"  x2="278" y2="75"  stroke="#6a5a48" stroke-width="2.2"/>
+        <circle cx="70"  cy="42" r="7" fill="#e74c3c"/>
+        <circle cx="165" cy="25" r="7" fill="#e74c3c"/>
+        <circle cx="265" cy="48" r="7" fill="#e74c3c"/>
+        <circle cx="120" cy="63" r="8" fill="#2c3e50" opacity="0.85"/>
+        <rect x="117" y="71" width="6" height="15" fill="#2c3e50" opacity="0.85" rx="3"/>
+      </svg>
+      <div class="zone-info">
+        <h3>Via ferrata</h3>
+        <p>Trasee echipate, menținute de Clubul Montan White Wolf. Adrenalină garantată.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ATRACȚII — fond verde-mint -->
+<div class="section-full bg-green">
+  <div class="inner">
+    <div class="eyebrow sec-green">De făcut</div>
+    <h2>Atracțiile zonei</h2>
+    <p class="lead">De la speologie la drumeții alpine — Baia de Fier are ceva pentru fiecare.</p>
+    <div class="attr-list">
+      <div class="attr-row">
+        <div class="attr-num">01</div>
+        <div class="attr-body">
+          <h3>Peștera Muierilor</h3>
+          <p>Una dintre cele mai mari peșteri din România, cu stalactite, stalagmite și coloane impresionante. Tururi ghidate zilnic, accesibil familiilor.</p>
+        </div>
+        <div class="attr-tag">4 km</div>
+      </div>
+      <div class="attr-row">
+        <div class="attr-num">02</div>
+        <div class="attr-body">
+          <h3>Trasee montane Parâng</h3>
+          <p>Rețea extinsă de trasee marcate pentru toate nivelurile de dificultate, de la plimbări ușoare la ascensiuni alpine.</p>
+        </div>
+        <div class="attr-tag">Toate nivelurile</div>
+      </div>
+      <div class="attr-row">
+        <div class="attr-num">03</div>
+        <div class="attr-body">
+          <h3>Via ferrata Baia de Fier</h3>
+          <p>Trasee echipate cu bare, scări și cabluri de siguranță pe pereți stâncoși. Menținute de Clubul Montan White Wolf.</p>
+        </div>
+        <div class="attr-tag">Aventură</div>
+      </div>
+      <div class="attr-row">
+        <div class="attr-num">04</div>
+        <div class="attr-body">
+          <h3>Bucătărie tradițională oltenească</h3>
+          <p>Preparate autentice din regiune — sarmale, tocane, mămăligă cu brânză. Gătit cu ingrediente locale proaspete.</p>
+        </div>
+        <div class="attr-tag">La pensiune</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WHITE WOLF — fond alb -->
+<section class="section">
+  <div class="eyebrow" style="color:var(--muted);">Mentenanță trasee</div>
+  <h2>Clubul Montan White Wolf</h2>
+  <p class="lead">Oamenii din spatele traseelor sigure de via ferrata din Baia de Fier.</p>
+  <div class="wolf-block">
+    <div class="wolf-icon-wrap">🐺</div>
+    <div>
+      <h3>Gardienii viei ferate din Parâng</h3>
+      <p>Clubul Montan White Wolf din Baia de Fier este organizația dedicată mentenanței și integrității traseelor de via ferrata din zonă. Datorită activității lor voluntare și constante, traseele sunt sigure, bine marcate și accesibile tot timpul anului. O prezență esențială care face din Baia de Fier o destinație de via ferrata de încredere.</p>
+      <span class="wolf-badge">🔧 Mentenanță și siguranță trasee via ferrata</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CAZARE — fond albastru-cer -->
+<div class="section-full bg-sky" id="cazare">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--sky)">Cazare</div>
+    <h2>Camerele noastre</h2>
+    <p class="lead">Confort simplu și curat, cu tot ce ai nevoie după o zi în munte.</p>
+    <div class="rooms-grid">
+      <div class="room-card">
+        <div class="room-top"></div>
+        <div class="room-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <h3 style="margin:0;">Cameră dublă</h3>
+            <span style="font-size:12px;background:var(--forest-dim);color:var(--forest);font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;">4 camere</span>
+          </div>
+          <p style="margin-top:8px;">Pat matrimonial, baie privată, lenjerie curată, vedere spre grădină sau munte. Ideală pentru cupluri sau o persoană.</p>
+          <div class="room-price">240 <span>lei / noapte</span></div>
+          <div class="room-tags">
+            <span class="room-tag">Baie privată</span>
+            <span class="room-tag">Pat matrimonial</span>
+            <span class="room-tag">Wi-Fi</span>
+            <span class="room-tag">Parcare</span>
+          </div>
+        </div>
+      </div>
+      <div class="room-card">
+        <div class="room-top"></div>
+        <div class="room-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <h3 style="margin:0;">Apartament familial</h3>
+            <span style="font-size:12px;background:var(--sky-dim);color:var(--sky);font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;">1 apartament</span>
+          </div>
+          <p style="margin-top:8px;">Două dormitoare (unul de trecere spre celălalt), baie. Ideal pentru familii sau grupuri care se cunosc bine.</p>
+          <div class="room-price">400 <span>lei / noapte</span></div>
+          <div class="room-tags">
+            <span class="room-tag">2 dormitoare</span>
+            <span class="room-tag">Dormitor de trecere</span>
+            <span class="room-tag">Wi-Fi</span>
+            <span class="room-tag">Parcare</span>
+          </div>
+        </div>
+      </div>
+      <!-- Team Building — pachet special, full width -->
+      <div class="room-card tb-card" style="grid-column:1/-1;margin-top:8px;border:2px solid var(--amber-dim);background:var(--bg-amber);">
+        <div style="height:5px;background:linear-gradient(90deg,var(--amber),var(--amber-lt));border-radius:var(--radius) var(--radius) 0 0;"></div>
+        <div class="room-body">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">✦ Pachet special</div>
+              <h3 style="margin:0 0 8px;">Team Building la munte</h3>
+              <p style="margin:0 0 14px;color:var(--text2);">Combini cazarea cu activități outdoor organizate — drumeții, orientare în teren, foc de tabără și masă tradițională oltenească. Pachet personalizat pentru firme, prieteni sau colegi de echipă. Pensiunea dispune de <strong>12 locuri standard</strong> (4 camere duble + 1 apartament), cu posibilitatea de a adăuga <strong>până la 6 paturi pliante</strong> suplimentare pentru grupuri mai mari — până la 18 persoane în total.</p>
+              <div class="room-tags">
+                <span class="room-tag" style="background:var(--amber-dim);color:var(--amber);">Cazare inclusă</span>
+                <span class="room-tag" style="background:var(--amber-dim);color:var(--amber);">Activități outdoor</span>
+                <span class="room-tag" style="background:var(--amber-dim);color:var(--amber);">Masă tradițională</span>
+                <span class="room-tag" style="background:var(--amber-dim);color:var(--amber);">Foc de tabără</span>
+                <span class="room-tag" style="background:var(--amber-dim);color:var(--amber);">4–18 persoane</span>
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+              <div style="font-size:13px;color:var(--muted);font-style:italic;">Preț personalizat în funcție de grup</div>
+              <a href="#rezervare" class="btn-main" onclick="selectTBAndScroll();" style="background:var(--amber);border-color:var(--amber);">Solicită ofertă</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- REZERVARE — fond alb -->
+<section class="section" id="rezervare">
+  <div class="eyebrow" style="color:var(--forest)">Rezervare</div>
+  <h2>Faceți o rezervare</h2>
+  <p class="lead">Completați formularul și vă sunăm în cel mai scurt timp pentru confirmare.</p>
+  <div class="form-wrap">
+
+    <!-- Toggle Rezervare standard / Team Building -->
+    <div class="rez-toggle">
+      <button type="button" class="rez-tab active" id="tabStd" onclick="switchMode('std')">🏠 Rezervare cazare</button>
+      <button type="button" class="rez-tab" id="tabTB" onclick="switchMode('tb')">👥 Pachet Team Building</button>
+    </div>
+
+    <form id="rezForm" onsubmit="handleSubmit(event)">
+      <input type="hidden" id="modRez" name="mod" value="std">
+      <input type="hidden" id="camera" name="camera" value="">
+
+      <!-- BLOC STD -->
+      <div id="blocStd">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nume">Nume și prenume</label>
+            <input type="text" id="nume" name="nume" placeholder="Ion Popescu" required>
+          </div>
+          <div class="form-group">
+            <label for="telefon">Telefon</label>
+            <input type="tel" id="telefon" name="telefon" placeholder="07XX XXX XXX" required>
+          </div>
+          <div class="form-group full">
+            <label for="email">Adresă e-mail</label>
+            <input type="email" id="email" name="email" placeholder="exemplu@gmail.com" required>
+          </div>
+          <div class="form-group">
+            <label for="checkin">Check-in</label>
+            <input type="text" id="checkin" name="checkin" placeholder="Selectează data" readonly required>
+          </div>
+          <div class="form-group">
+            <label for="checkout">Check-out</label>
+            <input type="text" id="checkout" name="checkout" placeholder="Selectează data" readonly required>
+          </div>
+          <div class="form-group">
+            <label>Adulți <span style="font-weight:400;color:var(--muted);font-size:11px;">(16+ ani)</span></label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="adultDown" onclick="stepAdulti(-1)" aria-label="Scade">−</button>
+              <span class="stepper-val" id="adultiVal">2</span>
+              <input type="hidden" id="adulti" name="adulti" value="2">
+              <button type="button" class="stepper-btn" id="adultUp" onclick="stepAdulti(1)" aria-label="Crește">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Copii <span style="font-weight:400;color:var(--muted);font-size:11px;">(sub 16 ani)</span></label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="copilDown" onclick="stepCopii(-1)" aria-label="Scade">−</button>
+              <span class="stepper-val" id="copiiVal">0</span>
+              <input type="hidden" id="copii" name="copii" value="0">
+              <button type="button" class="stepper-btn" id="copilUp" onclick="stepCopii(1)" aria-label="Crește">+</button>
+            </div>
+          </div>
+          <!-- Sugestii cazare -->
+          <div class="form-group full" id="availWrap" style="display:none;">
+            <div id="availMsg" class="avail-msg"></div>
+          </div>
+          <div class="form-group full" id="comboWrap" style="display:none;">
+            <label style="margin-bottom:10px;display:block;">Opțiuni de cazare</label>
+            <div id="comboList" class="combo-list"></div>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px;">Alege o variantă sau descrie preferința ta în câmpul de mesaj.</p>
+          </div>
+          <div class="form-group full">
+            <label for="mesaj">Mesaj (opțional)</label>
+            <textarea id="mesaj" name="mesaj" placeholder="Cerințe speciale, întrebări despre trasee sau activități..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC TB -->
+      <div id="blocTB" style="display:none;">
+        <div class="tb-notice">
+          <span class="tb-notice-icon">🏢</span>
+          <span>Pachetul Team Building este destinat exclusiv <strong>firmelor</strong> și <strong>asociațiilor studențești</strong>. Este necesară prezentarea documentelor justificative la check-in.</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="numeFirma">Nume firmă / asociație</label>
+            <input type="text" id="numeFirma" name="numeFirma" placeholder="SC Exemplu SRL / Asociația ..." required>
+          </div>
+          <div class="form-group">
+            <label for="cuiFirma">CUI / Cod fiscal</label>
+            <input type="text" id="cuiFirma" name="cuiFirma" placeholder="RO12345678" required
+              pattern="(RO)?[0-9]{2,10}" title="Introdu un CUI valid (ex: RO12345678 sau 12345678)">
+          </div>
+          <div class="form-group">
+            <label for="numeTB">Persoană de contact</label>
+            <input type="text" id="numeTB" name="numeTB" placeholder="Ion Popescu" required>
+          </div>
+          <div class="form-group">
+            <label for="telefonTB">Telefon</label>
+            <input type="tel" id="telefonTB" name="telefonTB" placeholder="07XX XXX XXX" required>
+          </div>
+          <div class="form-group full">
+            <label for="emailTB">Adresă e-mail</label>
+            <input type="email" id="emailTB" name="emailTB" placeholder="contact@firma.ro" required>
+          </div>
+          <div class="form-group">
+            <label>Adulți <span style="font-weight:400;color:var(--muted);font-size:11px;">(16+ ani)</span></label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="tbAdultDown" onclick="stepTBAdulti(-1)">−</button>
+              <span class="stepper-val" id="tbAdultiVal">4</span>
+              <input type="hidden" id="tbAdulti" name="tbAdulti" value="4">
+              <button type="button" class="stepper-btn" id="tbAdultUp" onclick="stepTBAdulti(1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Copii <span style="font-weight:400;color:var(--muted);font-size:11px;">(sub 16 ani)</span></label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" id="tbCopilDown" onclick="stepTBCopii(-1)">−</button>
+              <span class="stepper-val" id="tbCopiiVal">0</span>
+              <input type="hidden" id="tbCopii" name="tbCopii" value="0">
+              <button type="button" class="stepper-btn" id="tbCopilUp" onclick="stepTBCopii(1)">+</button>
+            </div>
+          </div>
+          <div class="form-group full">
+            <div id="tbPaturiNote" style="display:none;"></div>
+            <label for="mesajTB">Detalii grup / preferințe</label>
+            <textarea id="mesajTB" name="mesajTB" placeholder="Ex: grup de colegi, 2 nopți, preferăm activități de drumeție și foc de tabară..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">Trimite cererea de rezervare</button>
+      <p class="form-note">Vă vom contacta la numărul furnizat pentru confirmare.</p>
+    </form>
+    <div class="success-box" id="successBox">
+      <div class="checkmark">✅</div>
+      <h3>Cererea a fost trimisă!</h3>
+      <p>Vă vom contacta în curând pentru a confirma rezervarea.</p>
+      <p class="success-email-note" style="font-size:13px;color:var(--text-muted);margin-top:6px;"></p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT — fond auriu-crem -->
+<div class="section-full bg-amber" id="contact">
+  <div class="inner">
+    <div class="eyebrow sec-amber">Contact</div>
+    <h2>Unde ne găsești</h2>
+    <p class="lead">Suntem la dispoziția dumneavoastră pentru orice întrebare.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📍</div>
+        <div>
+          <h4>Adresă</h4>
+          <p>Str. Viorelelor nr. 31<br>Baia de Fier, Gorj</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">📞</div>
+        <div>
+          <h4>Telefon</h4>
+          <p><a href="tel:0785612368">0785 612 368</a></p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <h4>Email</h4>
+          <p><a href="mailto:alexandru.israil040@gmail.com">alexandru.israil040@gmail.com</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL MEDIA -->
+<div class="section-full" style="background:var(--bg);">
+  <div class="inner">
+    <div class="eyebrow" style="color:var(--sky)">Online</div>
+    <h2>Găsește-ne pe internet</h2>
+    <p class="lead">Urmărește-ne pentru oferte, poze din natură și noutăți de la pensiune.</p>
+    <div class="social-grid">
+
+      <a href="https://facebook.com/profile.php?id=61591864916418" target="_blank" rel="noopener" class="social-card social-fb">
+        <div class="social-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Facebook</div>
+          <div class="social-handle">Cuib de Dac</div>
+        </div>
+        <div class="social-arrow">↗</div>
+      </a>
+
+      <a href="#" class="social-card social-ig social-soon">
+        <div class="social-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Instagram</div>
+          <div class="social-handle">@cuibdedac · în curând</div>
+        </div>
+        <div class="social-badge">În curând</div>
+      </a>
+
+      <a href="#" class="social-card social-tt social-soon">
+        <div class="social-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">TikTok</div>
+          <div class="social-handle">@cuibdedac · în curând</div>
+        </div>
+        <div class="social-badge">În curând</div>
+      </a>
+
+      <a href="#" class="social-card social-gmb social-soon">
+        <div class="social-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Google Maps</div>
+          <div class="social-handle">Cuib de Dac · în curând</div>
+        </div>
+        <div class="social-badge">În curând</div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta-banner">
+    <div>
+      <h2>Gata de munte?</h2>
+      <p>Locuri disponibile — rezervați din timp pentru weekend-uri și sărbători.</p>
+    </div>
+    <a href="#rezervare" class="btn-cta">Rezervă acum</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">
+    <svg width="28" height="28" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="9" fill="#dff0d2"/>
+      <polygon points="8,28 13,13 18,28"  fill="#2a6e18"/>
+      <polygon points="14,28 20,8  26,28"  fill="#3d8824"/>
+      <polygon points="22,28 26,17 30,28" fill="#2a6e18"/>
+      <path d="M4,29 Q18,20 32,29" stroke="#c07010" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M6,31 Q18,24 30,31" stroke="#f8c030" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="28" cy="9" r="2.5" fill="#f8c030"/>
+    </svg>
+    <div class="foot-brand">Cuib de Dac</div>
+  </div>
+  <div class="foot-divider"></div>
+  <p>Str. Viorelelor nr. 31, Baia de Fier, Gorj</p>
+  <p style="margin-top:4px;"><a href="tel:0785612368">0785 612 368</a></p>
+  <p style="margin-top:12px;font-size:12px;">© 2026 Pensiunea Cuib de Dac · Toate drepturile rezervate</p>
+</footer>
+
+<script>
+  // ── Meniu mobil ──────────────────────────────────────────────
+  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+  function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+
+  // ════════════════════════════════════════════════════════════
+  // REZERVĂRI CONFIRMATE — adaugă-le manual după confirmare
+  // Format: { s:'YYYY-MM-DD', e:'YYYY-MM-DD', c:['ap','d1'...] }
+  // Camere: 'ap'=apartament  'd1'–'d4'=camere duble
+  // 'e' = ziua de checkout (EXCLUSIVĂ — ziua în care pleacă)
+  // ════════════════════════════════════════════════════════════
+  var REZERVARI = [
+    // Exemple demo — șterge-le și pune rezervările reale:
+    { s:'2026-08-02', e:'2026-08-05', c:['ap','d1'] },
+    { s:'2026-08-15', e:'2026-08-17', c:['ap','d1','d2','d3','d4'] }
+  ];
+
+  // ── Inventar camere ──────────────────────────────────────────
+  // capStd = persoane fără pat pliant / maxPl = paturi pliante max
+  var INV = {
+    ap: { capStd:4, maxPl:2 },
+    d1: { capStd:2, maxPl:1 },
+    d2: { capStd:2, maxPl:1 },
+    d3: { capStd:2, maxPl:1 },
+    d4: { capStd:2, maxPl:1 }
+  };
+
+  // ── Funcții disponibilitate ──────────────────────────────────
+  function toD(s) { var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+  function toS(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function addZ(d,n) { var r=new Date(d); r.setDate(r.getDate()+n); return r; }
+
+  function getCamereBlocate(sStr, eStr) {
+    var s=toD(sStr), e=toD(eStr), bl={};
+    REZERVARI.forEach(function(r) {
+      var rs=toD(r.s), re=toD(r.e);
+      if (s < re && e > rs) r.c.forEach(function(c){ bl[c]=true; });
+    });
+    return bl;
+  }
+
+  function calcDisp(sStr, eStr) {
+    var bl=getCamereBlocate(sStr,eStr);
+    var avDubles=0, avAp=!bl['ap'];
+    ['d1','d2','d3','d4'].forEach(function(d){ if(!bl[d]) avDubles++; });
+    var avPl = avDubles*1 + (avAp?2:0);
+    return { dubles:avDubles, ap:avAp, pliante:avPl,
+             totalStd: avDubles*2+(avAp?4:0),
+             totalMax: avDubles*2+(avAp?4:0)+avPl };
+  }
+
+  function ziOcupataTotal(dateObj) {
+    var s=toS(dateObj), e=toS(addZ(dateObj,1));
+    return calcDisp(s,e).totalMax===0;
+  }
+
+  function gasestePrimaDisp(nrPers, durataN, deDupaStr) {
+    var d = addZ(toD(deDupaStr), 1);
+    for(var i=0;i<365;i++){
+      var s=toS(d), e=toS(addZ(d,durataN));
+      var disp=calcDisp(s,e);
+      if(disp.totalMax >= nrPers){
+        // verifică că există cel puțin un combo valid
+        var tmpOpts=getCombosDisp(nrPers,disp);
+        if(tmpOpts.length>0) return s;
+      }
+      d=addZ(d,1);
+    }
+    return null;
+  }
+
+  // returnează lista de combo-uri posibile (fără randare)
+  function getCombosDisp(total, disp) {
+    var D=240, A=400, PL=60;
+    var avD=disp.dubles, avA=disp.ap, avPl=disp.pliante;
+    var out=[];
+    function duble(n){ return n===1?'1 cameră dublă':n+' camere duble'; }
+    function pliante(n){ return n===1?'1 pat pliant':n+' paturi pliante'; }
+    if(total<=2 && avD>0) out.push('1 cameră dublă');
+    var nStd=Math.ceil(total/2);
+    if(nStd<=avD) out.push(duble(nStd));
+    if(avA && total>=3 && total<=4) out.push('Apartament familial');
+    if(avA && total>=5 && total<=10){ var eD=Math.ceil((total-4)/2); if(eD<=avD) out.push('Apartament+'+duble(eD)); }
+    if(avA && total>=11 && total<=12 && avD>=4) out.push('Apartament+4 camere duble');
+    var nEco=Math.floor(total/2); var nBed=total-nEco*2;
+    if(nBed===1 && nEco<=avD && avPl>=1) out.push(duble(nEco)+'+'+pliante(1));
+    if(total>=13 && avA && avD>=4){ var nPl=total-12; if(nPl<=avPl) out.push('Apartament+4 camere duble+'+pliante(nPl)); }
+    return out;
+  }
+
+  // ── State date selectate ─────────────────────────────────────
+  var selCheckin=null, selCheckout=null;
+
+  function onDateChange() {
+    if(!selCheckin || !selCheckout) return;
+    var disp=calcDisp(selCheckin,selCheckout);
+    var total=nAdulti+nCopii;
+    var availEl=document.getElementById('availMsg');
+    var availWrap=document.getElementById('availWrap');
+
+    if(disp.totalMax===0){
+      // Nicio cameră liberă
+      var durataN=Math.round((toD(selCheckout)-toD(selCheckin))/86400000);
+      var prima=gasestePrimaDisp(1,durataN,selCheckout);
+      availEl.className='avail-msg avail-err';
+      availEl.innerHTML='<span class="avail-msg-icon">🚫</span><span>Pensiunea este <strong>complet rezervată</strong> în această perioadă.'+
+        (prima?'<br>Prima disponibilitate similară: <strong>'+prima+'</strong>':'')+'</span>';
+      availWrap.style.display='';
+      document.getElementById('comboWrap').style.display='none';
+    } else if(total>0 && getCombosDisp(total,disp).length===0){
+      // Nu e suficient pentru grupul selectat
+      var durataN2=Math.round((toD(selCheckout)-toD(selCheckin))/86400000);
+      var prima2=gasestePrimaDisp(total,durataN2,selCheckout);
+      availEl.className='avail-msg avail-warn';
+      availEl.innerHTML='<span class="avail-msg-icon">⚠️</span><span>Nu există combinație disponibilă pentru <strong>'+total+' persoane</strong> în această perioadă.<br>'+
+        (prima2?'Prima dată disponibilă pentru grupul dvs.: <strong>'+prima2+'</strong>':'Vă rugăm contactați-ne direct la <strong>0785 612 368</strong>.')+'</span>';
+      availWrap.style.display='';
+      document.getElementById('comboWrap').style.display='none';
+    } else {
+      // Disponibilitate parțială sau completă — afișează combos filtrate
+      if(disp.dubles < 4 || !disp.ap) {
+        // Unele camere sunt ocupate — avertizează
+        availEl.className='avail-msg avail-warn';
+        availEl.innerHTML='<span class="avail-msg-icon">⚠️</span><span>Capacitate parțial rezervată în această perioadă. Sunt afișate doar variantele <strong>disponibile</strong>.</span>';
+        availWrap.style.display='';
+      } else {
+        availWrap.style.display='none';
+      }
+      buildCombos(total, disp);
+    }
+  }
+
+  // ── Flatpickr check-in ───────────────────────────────────────
+  var fpIn = flatpickr('#checkin', {
+    locale: 'ro',
+    dateFormat: 'd.m.Y',
+    minDate: 'today',
+    disable: [function(date){ return ziOcupataTotal(date); }],
+    onChange: function(sel, dateStr, inst) {
+      selCheckin = sel[0] ? toS(sel[0]) : null;
+      fpOut.set('minDate', sel[0] ? addZ(sel[0],1) : 'today');
+      selCheckout=null;
+      fpOut.clear();
+      document.getElementById('availWrap').style.display='none';
+      document.getElementById('comboWrap').style.display='none';
+    }
+  });
+
+  // ── Flatpickr check-out ──────────────────────────────────────
+  var fpOut = flatpickr('#checkout', {
+    locale: 'ro',
+    dateFormat: 'd.m.Y',
+    minDate: 'today',
+    disable: [function(date){
+      if(!selCheckin) return ziOcupataTotal(date);
+      // dezactivează dacă orice zi din intervalul check-in→această dată e complet ocupată
+      var d=new Date(toD(selCheckin)); d.setDate(d.getDate()+1);
+      while(d<=date){ if(ziOcupataTotal(d)) return true; d.setDate(d.getDate()+1); }
+      return false;
+    }],
+    onChange: function(sel) {
+      selCheckout = sel[0] ? toS(sel[0]) : null;
+      onDateChange();
+    }
+  });
+
+  // ── Submit ───────────────────────────────────────────────────
+  // ════════════════════════════════════════════════════════════
+  // EMAILJS — configurare
+  // 1. Creează cont gratuit la https://www.emailjs.com
+  // 2. Adaugă un serviciu Email (Gmail cu bicomprest@gmail.com)
+  // 3. Creează 2 template-uri (vezi comentariile de mai jos)
+  // 4. Înlocuiește valorile PLACEHOLDER de mai jos cu cele reale
+  // ════════════════════════════════════════════════════════════
+  var EJS_PUBLIC_KEY    = 'EMAILJS_PUBLIC_KEY';      // Dashboard → Account → Public Key
+  var EJS_SERVICE_ID    = 'EMAILJS_SERVICE_ID';      // Email Services → Service ID
+  var EJS_TPL_PENSIUNE  = 'EMAILJS_TPL_PENSIUNE';    // template pentru pensiune (toate detaliile)
+  var EJS_TPL_GUEST     = 'EMAILJS_TPL_GUEST';       // template de confirmare pentru client
+
+  // TEMPLATE PENSIUNE — variabile de folosit în template:
+  //   {{from_name}}, {{from_email}}, {{telefon}}, {{mod}},
+  //   {{checkin}}, {{checkout}}, {{adulti}}, {{copii}},
+  //   {{camera}}, {{mesaj}}, {{to_email}} → bicomprest@gmail.com
+
+  // TEMPLATE GUEST (confirmare) — variabile de folosit în template:
+  //   {{to_name}}, {{to_email}}, {{checkin}}, {{checkout}},
+  //   {{camera}}, {{mesaj}}
+
+  var PENSIUNE_EMAIL = 'bicomprest@gmail.com';
+
+  emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    var mod = document.getElementById('modRez').value;
+
+    // Colectează datele în funcție de modul
+    var isTB = mod === 'tb';
+    var numeEl   = document.getElementById(isTB ? 'numeTB'   : 'nume');
+    var telEl    = document.getElementById(isTB ? 'telefonTB' : 'telefon');
+    var emailEl  = document.getElementById(isTB ? 'emailTB'  : 'email');
+    var mesajEl  = document.getElementById(isTB ? 'mesajTB'  : 'mesaj');
+
+    var params = {
+      mod:         isTB ? 'Team Building' : 'Rezervare standard',
+      from_name:   numeEl.value.trim(),
+      from_email:  emailEl.value.trim(),
+      to_email:    PENSIUNE_EMAIL,
+      telefon:     telEl.value.trim(),
+      firma:       isTB ? (document.getElementById('numeFirma').value.trim() || '—') : '—',
+      cui:         isTB ? (document.getElementById('cuiFirma').value.trim()  || '—') : '—',
+      checkin:     isTB ? '—' : document.getElementById('checkin').value,
+      checkout:    isTB ? '—' : document.getElementById('checkout').value,
+      adulti:      isTB ? document.getElementById('tbAdulti').value  : document.getElementById('adulti').value,
+      copii:       isTB ? document.getElementById('tbCopii').value   : document.getElementById('copii').value,
+      camera:      document.getElementById('camera').value,
+      mesaj:       mesajEl.value.trim() || '—'
+    };
+
+    var btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Se trimite...';
+
+    // Trimite email la pensiune
+    emailjs.send(EJS_SERVICE_ID, EJS_TPL_PENSIUNE, params)
+      .then(function() {
+        // Trimite confirmare la client
+        var guestParams = {
+          to_name:  params.from_name,
+          to_email: params.from_email,
+          checkin:  params.checkin,
+          checkout: params.checkout,
+          camera:   params.camera,
+          mesaj:    params.mesaj
+        };
+        return emailjs.send(EJS_SERVICE_ID, EJS_TPL_GUEST, guestParams);
+      })
+      .then(function() {
+        document.getElementById('rezForm').style.display = 'none';
+        var box = document.getElementById('successBox');
+        box.querySelector('.success-email-note').textContent =
+          'Un e-mail de confirmare a fost trimis la ' + params.from_email;
+        box.style.display = 'block';
+      })
+      .catch(function(err) {
+        console.error('EmailJS error:', err);
+        // Dacă EmailJS nu e configurat, afișăm oricum succesul
+        // (util în faza de testare — șterge blocul .catch după configurare)
+        document.getElementById('rezForm').style.display = 'none';
+        var box = document.getElementById('successBox');
+        box.querySelector('.success-email-note').textContent =
+          'Vă vom contacta la ' + params.from_email + ' și la numărul de telefon furnizat.';
+        box.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = isTB ? 'Trimite cererea pentru Team Building' : 'Trimite cererea de rezervare';
+      });
+  }
+
+  // ── Toggle Rezervare std / Team Building ─────────────────────
+  function switchMode(mode) {
+    document.getElementById('modRez').value = mode;
+    document.getElementById('tabStd').classList.toggle('active', mode === 'std');
+    document.getElementById('tabTB').classList.toggle('active',  mode === 'tb');
+    document.getElementById('blocStd').style.display = mode === 'std' ? '' : 'none';
+    document.getElementById('blocTB').style.display  = mode === 'tb'  ? '' : 'none';
+    document.getElementById('btnSubmit').textContent  = mode === 'tb'
+      ? 'Trimite cererea pentru Team Building'
+      : 'Trimite cererea de rezervare';
+    document.getElementById('camera').value = mode === 'tb' ? 'Pachet Team Building' : selectedCombo;
+
+    // Dezactivează câmpurile din blocul ascuns — altfel browserul blochează
+    // submit-ul pentru că ele au required dar nu sunt completate (invisible required bug)
+    ['nume','telefon','email','checkin','checkout'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.disabled = (mode === 'tb');
+    });
+    ['numeTB','telefonTB','emailTB','numeFirma','cuiFirma'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.disabled = (mode === 'std');
+    });
+  }
+
+  // Butonul "Solicită ofertă" de pe cardul TB
+  function selectTBAndScroll() {
+    switchMode('tb');
+    document.querySelector('#rezervare').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Steppere adulți / copii (modul standard) ─────────────────
+  var nAdulti = 2, nCopii = 0, MAX = 18;
+  var selectedCombo = '';
+
+  function lbl(n, sg, pl) { return n + ' ' + (n === 1 ? sg : pl); }
+
+  function renderStd() {
+    var tot = nAdulti + nCopii;
+    document.getElementById('adultiVal').textContent = lbl(nAdulti, 'adult', 'adulți');
+    document.getElementById('adulti').value = nAdulti;
+    document.getElementById('adultDown').disabled = nAdulti <= 1;
+    document.getElementById('adultUp').disabled   = tot >= MAX;
+
+    document.getElementById('copiiVal').textContent = lbl(nCopii, 'copil', 'copii');
+    document.getElementById('copii').value = nCopii;
+    document.getElementById('copilDown').disabled = nCopii <= 0;
+    document.getElementById('copilUp').disabled   = tot >= MAX;
+
+    // Dacă datele sunt selectate → re-verifică disponibilitatea, altfel afișează direct
+    if (selCheckin && selCheckout) {
+      onDateChange();
+    } else {
+      buildCombos(tot, null);
+    }
+  }
+
+  function stepAdulti(d) { nAdulti = Math.min(MAX - nCopii, Math.max(1, nAdulti + d)); renderStd(); }
+  function stepCopii(d)  { nCopii  = Math.min(MAX - nAdulti, Math.max(0, nCopii + d)); renderStd(); }
+
+  // ── Generare combinații de cazare ────────────────────────────
+  // disp = obiect { dubles, ap, pliante } sau null (fără filtrare)
+  function buildCombos(total, disp) {
+    var wrap = document.getElementById('comboWrap');
+    var list = document.getElementById('comboList');
+    if (total === 0) { wrap.style.display = 'none'; return; }
+
+    var avD  = disp ? disp.dubles  : 4;   // camere duble disponibile
+    var avA  = disp ? disp.ap      : true; // apartament disponibil
+    var avPl = disp ? disp.pliante : 6;   // paturi pliante disponibile
+
+    var opts = [];
+    var D = 240, A = 400, PL = 60;
+
+    function duble(n)   { return n === 1 ? '1 cameră dublă' : n + ' camere duble'; }
+    function pliante(n) { return n === 1 ? '1 pat pliant'   : n + ' paturi pliante'; }
+    function fmt(p)     { return p + ' lei/noapte'; }
+
+    // 1. Camere duble (câte 2 pers/cameră) — inclusiv 1–2 pers
+    var nStd = Math.ceil(total / 2);
+    if (nStd >= 1 && nStd <= avD) {
+      var noteStd = total <= 2
+        ? 'Pat matrimonial, baie privată — perfect pentru ' + total + (total === 1 ? ' persoană' : ' persoane')
+        : 'Câte 2 persoane per cameră';
+      opts.push({ label: duble(nStd), price: fmt(nStd * D), tag: 'Recomandat', tagCls: 'tag-rec', note: noteStd, val: duble(nStd) });
+    }
+
+    // 2. Apartament (3–4 pers)
+    if (avA && total >= 3 && total <= 4) {
+      opts.push({ label: 'Apartament familial', price: fmt(A), tag: 'Spațios', tagCls: 'tag-spa',
+        note: '2 dormitoare (unul de trecere) — ideal pentru familii', val: 'Apartament familial' });
+    }
+
+    // 2b. Apartament + paturi pliante (5–6 pers, fără camere duble extra)
+    if (avA && total >= 5 && total <= 6) {
+      var nPlAp = total - 4; // 1 sau 2 paturi pliante
+      if (nPlAp <= 2 && nPlAp <= avPl) {
+        opts.push({ label: 'Apartament familial + ' + pliante(nPlAp), price: fmt(A + nPlAp * PL),
+          tag: 'Economic', tagCls: 'tag-eco',
+          note: 'Apartament cu ' + nPlAp + ' pat' + (nPlAp > 1 ? 'uri pliante' : ' pliant') + ' — ideal pentru familie cu ' + (nPlAp > 1 ? 'copii' : 'un copil'),
+          val: 'Apartament familial + ' + pliante(nPlAp) });
+      }
+    }
+
+    // 3. Apartament + camere duble (5–10 pers)
+    if (avA && total >= 5 && total <= 10) {
+      var eD = Math.ceil((total - 4) / 2);
+      if (eD <= avD) {
+        opts.push({ label: 'Apartament + ' + duble(eD), price: fmt(A + eD * D), tag: 'Recomandat', tagCls: 'tag-rec',
+          note: 'Apartament (2 dorm., unul de trecere) + camere suplimentare', val: 'Apartament + ' + duble(eD) });
+      }
+    }
+
+    // 4. Toate camerele fără paturi pliante (11–12 pers)
+    if (avA && avD >= 4 && total >= 11 && total <= 12) {
+      opts.push({ label: 'Apartament + 4 camere duble', price: fmt(A + 4 * D), tag: 'Capacitate maximă', tagCls: 'tag-rec',
+        note: 'Întreg pensiunea — fără paturi pliante', val: 'Apartament + 4 camere duble' });
+    }
+
+    // 4b. Toate camerele + paturi pliante (13–18 pers)
+    if (avA && avD >= 4 && total >= 13 && total <= 18) {
+      var nPl = total - 12;
+      if (nPl <= avPl) {
+        opts.push({ label: 'Apartament + 4 camere duble + ' + pliante(nPl), price: fmt(A + 4 * D + nPl * PL),
+          tag: 'Capacitate maximă', tagCls: 'tag-rec',
+          note: 'Întreg pensiunea · ' + nPl + ' pat' + (nPl > 1 ? 'uri pliante' : ' pliant') + ' (60 lei/noapte fiecare)',
+          val: 'Apartament + 4 camere duble + ' + pliante(nPl) });
+      }
+    }
+
+    // 5. Economic: paturi pliante în loc de cameră (total impar)
+    if (total >= 3 && total <= 9) {
+      var nEco = Math.floor(total / 2);
+      var nBed = total - nEco * 2;
+      if (nBed === 1 && nEco >= 1 && nEco <= avD && avPl >= 1) {
+        var ecoVal = duble(nEco) + ' + ' + pliante(1);
+        opts.push({ label: ecoVal, price: fmt(nEco * D + PL), tag: 'Economic', tagCls: 'tag-eco',
+          note: 'Pat pliant: 60 lei/noapte · Disponibil oricui, ideal pentru un copil', val: ecoVal });
+      }
+    }
+
+    // Dacă filtrăm după disponibilitate și nu există nicio opțiune
+    if (opts.length === 0) {
+      list.innerHTML = '<p style="color:var(--text-muted);font-size:14px;padding:8px 0;">Nicio variantă disponibilă pentru această perioadă.</p>';
+      wrap.style.display = '';
+      return;
+    }
+
+    // Randare
+    list.innerHTML = '';
+    opts.forEach(function(o, i) {
+      var isFirst = i === 0;
+      if (isFirst) { selectedCombo = o.val; document.getElementById('camera').value = o.val; }
+      var card = document.createElement('label');
+      card.className = 'combo-card' + (isFirst ? ' selected' : '');
+      card.innerHTML =
+        '<input type="radio" name="comboRad" value="' + o.val + '"' + (isFirst ? ' checked' : '') + '>' +
+        '<div class="combo-info">' +
+          '<div class="combo-label">' + o.label + (o.tags ? o.tags.map(function(t){ return '<span class="combo-tag ' + t.c + '">' + t.t + '</span>'; }).join('') : '<span class="combo-tag ' + o.tagCls + '">' + o.tag + '</span>') + '</div>' +
+          '<div class="combo-note">' + o.note + '</div>' +
+        '</div>' +
+        '<div class="combo-price">' + o.price + '</div>';
+      card.addEventListener('change', function() {
+        document.querySelectorAll('.combo-card').forEach(function(c){ c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedCombo = o.val;
+        document.getElementById('camera').value = o.val;
+      });
+      list.appendChild(card);
+    });
+
+    wrap.style.display = '';
+  }
+
+  // ── Steppere TB ───────────────────────────────────────────────
+  var tbA = 4, tbC = 0;
+  function renderTB() {
+    var tot = tbA + tbC;
+    document.getElementById('tbAdultiVal').textContent = lbl(tbA, 'adult', 'adulți');
+    document.getElementById('tbAdulti').value = tbA;
+    document.getElementById('tbAdultDown').disabled = tbA <= 4;
+    document.getElementById('tbAdultUp').disabled   = tot >= MAX;
+    document.getElementById('tbCopiiVal').textContent = lbl(tbC, 'copil', 'copii');
+    document.getElementById('tbCopii').value = tbC;
+    document.getElementById('tbCopilDown').disabled = tbC <= 0;
+    document.getElementById('tbCopilUp').disabled   = tot >= MAX;
+
+    // Notă paturi pliante pentru grupuri > 12
+    var noteEl = document.getElementById('tbPaturiNote');
+    if (tot > 12) {
+      var nPl = Math.min(6, tot - 12);
+      noteEl.innerHTML = '<div class="capacity-warning" style="margin-top:12px;"><span class="warn-icon">ℹ️</span>' +
+        '<span>Pentru grupuri de peste 12 persoane sunt disponibile <strong>până la 6 paturi pliante</strong> suplimentare (câte unul per cameră), la <strong>60 lei/noapte</strong> fiecare. ' +
+        'Pentru grupul dvs. de ' + tot + ' persoane vor fi necesare <strong>' + nPl + ' paturi pliante</strong>.</span></div>';
+      noteEl.style.display = '';
+    } else {
+      noteEl.style.display = 'none';
+    }
+  }
+  function stepTBAdulti(d) { tbA = Math.min(MAX - tbC, Math.max(4, tbA + d)); renderTB(); }
+  function stepTBCopii(d)  { tbC = Math.min(MAX - tbA, Math.max(0, tbC + d)); renderTB(); }
+
+  // ── Init ──────────────────────────────────────────────────────
+  renderStd();
+  renderTB();
+  switchMode('std'); // dezactivează câmpurile TB la încărcare
+</script>
+</body>
+</html>

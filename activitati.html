@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activități — Cuib de Dac, Baia de Fier</title>
+  <meta name="description" content="Excursii ghidate, via ferrata, drumeții și ateliere tradiționale organizate de Pensiunea Cuib de Dac. Rezervă-ți locul online.">
+  <meta name="theme-color" content="#f5f8f2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest:    #2a6e18;
+      --forest-lt: #3d8824;
+      --forest-dim:#dff0d2;
+      --sky:       #2a7fb8;
+      --sky-lt:    #4498d0;
+      --sky-dim:   #dceef8;
+      --amber:     #c07010;
+      --amber-dim: #faecd4;
+      --bg:        #fafaf6;
+      --bg-green:  #f2f9ea;
+      --bg-sky:    #ebf5fc;
+      --bg-amber:  #fdf6ea;
+      --text:      #1c3a12;
+      --text2:     #3a5828;
+      --muted:     #6a8458;
+      --border:    rgba(28,58,18,0.10);
+      --shadow:    0 2px 14px rgba(28,58,18,0.07);
+      --shadow-md: 0 6px 28px rgba(28,58,18,0.12);
+      --radius:    14px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); font-size:16px; line-height:1.7; -webkit-font-smoothing:antialiased; }
+    h1,h2,h3 { font-family:'Playfair Display',serif; font-weight:600; line-height:1.25; }
+    a { color:inherit; text-decoration:none; }
+
+    /* ══ NAV ══ */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      padding:0 1.25rem;
+      background:rgba(250,250,246,0.94);
+      backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+      box-shadow:0 1px 12px rgba(28,58,18,0.06);
+    }
+    .nav-inner { max-width:960px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:62px; }
+    .nav-brand { display:flex; align-items:center; gap:10px; }
+    .nav-icon  { width:36px; height:36px; border-radius:9px; overflow:hidden; flex-shrink:0; }
+    .nav-brand span { font-family:'Playfair Display',serif; font-size:17px; color:var(--text); font-weight:600; }
+    .nav-links { display:flex; gap:4px; }
+    .nav-links a { font-size:13px; color:var(--muted); padding:6px 12px; border-radius:var(--radius-sm); transition:color .18s,background .18s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--text); background:var(--bg-green); }
+    .nav-links a.active { color:var(--forest); font-weight:600; }
+    .nav-cta { font-size:13px; font-weight:600; background:var(--amber); color:#fff; padding:8px 18px; border-radius:var(--radius-sm); border:none; cursor:pointer; transition:background .18s,transform .12s; }
+    .nav-cta:hover { background:var(--amber-lt); transform:translateY(-1px); }
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; padding:4px; }
+    .hamburger span { width:22px; height:2px; background:var(--text); border-radius:2px; }
+    .mobile-menu { display:none; flex-direction:column; background:var(--bg); border-top:1px solid var(--border); padding:1rem 1.25rem; gap:4px; }
+    .mobile-menu a { font-size:15px; color:var(--muted); padding:10px 12px; border-radius:var(--radius-sm); transition:color .18s,background .18s; }
+    .mobile-menu a:hover { color:var(--text); background:var(--bg-green); }
+    .mobile-menu.open { display:flex; }
+
+    /* ══ PAGE HERO — banner compact ══ */
+    .page-hero {
+      padding: 110px 1.25rem 3.5rem;
+      background: var(--bg-green);
+      border-bottom: 1px solid var(--border);
+    }
+    .page-hero-inner { max-width:960px; margin:0 auto; }
+    .page-eyebrow {
+      display:inline-flex; align-items:center; gap:7px;
+      font-size:12px; font-weight:500; letter-spacing:0.10em;
+      text-transform:uppercase; color:var(--forest);
+      margin-bottom:0.8rem;
+    }
+    .page-eyebrow::before { content:''; width:24px; height:1px; background:var(--forest); }
+    .page-hero h1 { font-size:clamp(2rem,5vw,3.2rem); color:var(--text); margin-bottom:0.8rem; }
+    .page-hero h1 em { color:var(--forest); font-style:normal; }
+    .page-hero p { font-size:16px; color:var(--muted); max-width:560px; line-height:1.75; }
+
+    /* ══ LAYOUT ══ */
+    .section { padding:4.5rem 1.25rem; max-width:960px; margin:0 auto; }
+    .section-full { padding:4.5rem 1.25rem; }
+    .section-full .inner { max-width:960px; margin:0 auto; }
+    .section-full.bg-sky   { background:var(--bg-sky); }
+    .section-full.bg-amber { background:var(--bg-amber); }
+    .eyebrow { font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--sky); display:inline-flex; align-items:center; gap:8px; margin-bottom:0.7rem; }
+    .eyebrow::before { content:''; width:20px; height:1px; background:var(--sky); }
+    h2 { font-size:clamp(1.5rem,3.5vw,2.2rem); color:var(--text); margin-bottom:0.6rem; }
+    .lead { font-size:15px; color:var(--muted); max-width:520px; margin-bottom:2.5rem; line-height:1.7; }
+    .divider { border:none; border-top:1px solid var(--border); margin:0; }
+
+    /* ══ ACTIVITĂȚI GRID ══ */
+    .act-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+
+    .act-card {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); overflow:hidden;
+      box-shadow:var(--shadow); display:flex; flex-direction:column;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .act-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+
+    .act-img { width:100%; display:block; }
+
+    .act-body { padding:1.4rem; flex:1; display:flex; flex-direction:column; }
+    .act-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+    .act-tag {
+      font-size:11px; font-weight:500; padding:3px 10px; border-radius:20px;
+    }
+    .tag-durata  { background:var(--sky-dim);   color:var(--sky);    border:1px solid rgba(42,127,184,.18); }
+    .tag-nivel   { background:var(--forest-dim); color:var(--forest); border:1px solid rgba(42,110,24,.18); }
+    .tag-usor    { background:#e8f5e4; color:#2a8020; border:1px solid rgba(42,128,32,.18); }
+    .tag-mediu   { background:#fdf0d8; color:#b06010; border:1px solid rgba(176,96,16,.18); }
+    .tag-avansat { background:#fde8e8; color:#b02020; border:1px solid rgba(176,32,32,.18); }
+
+    .act-body h3 { font-size:1.15rem; color:var(--text); margin-bottom:6px; }
+    .act-body p  { font-size:14px; color:var(--muted); line-height:1.65; flex:1; }
+
+    .act-footer { display:flex; align-items:center; justify-content:space-between; margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); gap:10px; }
+    .act-price { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--forest); }
+    .act-price span { font-size:12px; font-family:'Inter',sans-serif; color:var(--muted); }
+    .act-price.pret-cerere { font-size:1rem; color:var(--muted); font-family:'Inter',sans-serif; }
+
+    .btn-rezerva {
+      background:var(--forest); color:#fff;
+      padding:9px 18px; border-radius:var(--radius-sm);
+      font-size:13px; font-weight:600; border:none; cursor:pointer;
+      transition:background .18s,transform .12s; white-space:nowrap;
+      display:inline-block;
+    }
+    .btn-rezerva:hover { background:var(--forest-lt); transform:translateY(-1px); }
+
+    /* ══ FORMULAR REZERVARE ACTIVITATE ══ */
+    .form-wrap {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow);
+    }
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-group.full { grid-column:1/-1; }
+    label { font-size:12px; font-weight:500; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; }
+    input,select,textarea {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:11px 14px;
+      font-size:14px; color:var(--text); font-family:'Inter',sans-serif;
+      outline:none; transition:border-color .18s,box-shadow .18s; width:100%;
+    }
+    input::placeholder,textarea::placeholder { color:var(--muted); opacity:.55; }
+    input:focus,select:focus,textarea:focus { border-color:var(--forest); box-shadow:0 0 0 3px rgba(42,110,24,.10); }
+    select option { background:#fff; }
+    textarea { resize:vertical; min-height:90px; }
+    .btn-submit {
+      width:100%; padding:14px; margin-top:6px;
+      background:var(--amber); color:#fff; border:none;
+      border-radius:var(--radius-sm); font-size:15px; font-weight:600;
+      cursor:pointer; transition:background .18s,transform .12s;
+      font-family:'Inter',sans-serif;
+    }
+    .btn-submit:hover { background:var(--amber-lt); transform:translateY(-1px); }
+    .form-note { font-size:12px; color:var(--muted); text-align:center; margin-top:10px; }
+    .success-box { display:none; text-align:center; padding:2.5rem 1rem; }
+    .success-box .checkmark { font-size:3rem; margin-bottom:1rem; }
+    .success-box h3 { font-size:1.3rem; color:var(--forest); margin-bottom:.5rem; }
+    .success-box p  { font-size:14px; color:var(--muted); }
+
+    /* ══ INFO BOX ══ */
+    .info-boxes { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:2rem; }
+    .info-box {
+      background:white; border:1px solid var(--border);
+      border-radius:var(--radius); padding:1.3rem;
+      box-shadow:var(--shadow); text-align:center;
+    }
+    .info-box-icon { font-size:1.8rem; margin-bottom:8px; }
+    .info-box h4   { font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px; }
+    .info-box p    { font-size:13px; color:var(--muted); line-height:1.5; }
+
+    /* ══ CTA FOOTER ══ */
+    .cta-wrap { padding:0 1.25rem; }
+    .cta-banner {
+      max-width:960px; margin:3rem auto;
+      background:linear-gradient(135deg,var(--forest) 0%,#3a8824 100%);
+      border-radius:var(--radius); padding:2.5rem 3rem;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:1.5rem; flex-wrap:wrap;
+      box-shadow:0 8px 32px rgba(42,110,24,.22);
+    }
+    .cta-banner h2 { font-size:1.5rem; color:#fff; margin-bottom:4px; }
+    .cta-banner p  { font-size:14px; color:rgba(255,255,255,.72); }
+    .btn-cta {
+      background:#fff; color:var(--forest); padding:13px 28px;
+      border-radius:var(--radius-sm); font-size:14px; font-weight:700;
+      transition:background .18s,transform .12s; display:inline-block; white-space:nowrap;
+    }
+    .btn-cta:hover { background:#f0fae8; transform:translateY(-1px); }
+
+    /* ══ FOOTER ══ */
+    footer { background:var(--bg-green); border-top:1px solid var(--border); padding:2.5rem 1.25rem; text-align:center; }
+    .foot-logo  { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:8px; }
+    .foot-brand { font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--text); }
+    footer p    { font-size:13px; color:var(--muted); }
+    footer a    { color:var(--forest); }
+    .foot-divider { width:40px; height:1px; background:var(--border); margin:1rem auto; }
+
+    /* ══ MOBILE ══ */
+    @media (max-width:680px) {
+      .nav-links,.nav-cta { display:none; }
+      .hamburger { display:flex; }
+      .act-grid { grid-template-columns:1fr; }
+      .info-boxes { grid-template-columns:1fr; }
+      .form-grid { grid-template-columns:1fr; }
+      .form-group.full { grid-column:1; }
+      .cta-banner { text-align:center; justify-content:center; padding:2rem 1.5rem; }
+      .section { padding:3rem 1.25rem; }
+      .section-full { padding:3rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="9" fill="#dff0d2"/>
+          <polygon points="8,28 13,13 18,28"  fill="#2a6e18"/>
+          <polygon points="14,28 20,8  26,28"  fill="#3d8824"/>
+          <polygon points="22,28 26,17 30,28" fill="#2a6e18"/>
+          <path d="M4,29 Q18,20 32,29" stroke="#c07010" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <path d="M6,31 Q18,24 30,31" stroke="#f8c030" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <circle cx="28" cy="9" r="4" fill="#f8c030" opacity="0.3"/>
+          <circle cx="28" cy="9" r="2.5" fill="#f8c030"/>
+        </svg>
+      </div>
+      <span>Cuib de Dac</span>
+    </div>
+    <div class="nav-links">
+      <a href="cuib_de_dac.html">Acasă</a>
+      <a href="cuib_de_dac.html#cazare">Cazare</a>
+      <a href="activitati.html" class="active">Activități</a>
+      <a href="cuib_de_dac.html#contact">Contact</a>
+    </div>
+    <a href="#rezervare" class="nav-cta">Vreau să vin</a>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Meniu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="cuib_de_dac.html"          onclick="closeMenu()">Acasă</a>
+    <a href="cuib_de_dac.html#cazare"   onclick="closeMenu()">Cazare</a>
+    <a href="activitati.html"            onclick="closeMenu()">Activități</a>
+    <a href="cuib_de_dac.html#contact"  onclick="closeMenu()">Contact</a>
+    <a href="tel:0785612368" style="color:var(--amber);font-weight:600;margin-top:4px;">📞 0785 612 368</a>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow">Cuib de Dac · Baia de Fier</div>
+    <h1>Activități &amp; <em>Excursii</em></h1>
+    <p>Când plec pe munte, ușa e deschisă pentru toți oaspeții care vor să vină. Fără costuri — doar o zi frumoasă împreună în natură. Înscrie-te și ne vedem la plecare.</p>
+  </div>
+</div>
+
+<!-- ACTIVITĂȚI -->
+<section class="section" id="activitati">
+  <div class="eyebrow" style="color:var(--forest)">Ce organizăm</div>
+  <h2>Vino cu noi</h2>
+  <p class="lead">Acestea sunt activitățile pe care le organizez pentru oaspeți — complet gratuit. Când am o ieșire planificată, anunț data și oricine vrea poate să se înscrie.</p>
+
+  <div class="act-grid">
+
+    <!-- 1. Drumeție Parâng -->
+    <div class="act-card">
+      <svg class="act-img" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#5baee8"/>
+            <stop offset="100%" stop-color="#a8d8f8"/>
+          </linearGradient>
+        </defs>
+        <rect width="560" height="240" fill="url(#sky1)"/>
+        <circle cx="460" cy="48" r="36" fill="#f8d020" opacity="0.9"/>
+        <ellipse cx="100" cy="40" rx="90" ry="28" fill="white" opacity="0.65"/>
+        <ellipse cx="150" cy="30" rx="60" ry="20" fill="white" opacity="0.7"/>
+        <polygon points="0,180 80,80 160,150 260,50 360,140 460,60 560,120 560,240 0,240" fill="#4a8840" opacity="0.9"/>
+        <polygon points="0,200 90,110 190,170 300,80 420,160 520,100 560,140 560,240 0,240" fill="#3d8824"/>
+        <polygon points="0,220 70,170 160,200 260,160 360,200 460,170 560,200 560,240 0,240" fill="#2a6e18"/>
+        <!-- Traseu marcat -->
+        <polyline points="60,220 120,190 200,170 280,150 380,175 460,185 520,210" stroke="#e84040" stroke-width="3" fill="none" stroke-dasharray="8,5" opacity="0.8"/>
+        <circle cx="60"  cy="220" r="6" fill="#e84040" opacity="0.9"/>
+        <circle cx="520" cy="210" r="6" fill="#e84040" opacity="0.9"/>
+      </svg>
+      <div class="act-body">
+        <div class="act-tags">
+          <span class="act-tag tag-durata">½ zi</span>
+          <span class="act-tag tag-nivel tag-usor">Ușor — Mediu</span>
+        </div>
+        <h3>Drumeție ghidată Munții Parâng</h3>
+        <p>Traseu marcat prin păduri de fag și molid, cu priveliști panoramice spre vârfurile alpine. Ghid local inclus, echipament de bază necesar. Potrivit pentru familii și începători.</p>
+        <div class="act-footer">
+          <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
+          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Drumeție ghidată Munții Parâng')">Vreau să vin</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Via Ferrata -->
+    <div class="act-card">
+      <svg class="act-img" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+        <rect width="560" height="240" fill="#c8b898"/>
+        <rect x="0" y="150" width="560" height="90" fill="#a89878"/>
+        <polygon points="0,150 80,40 160,150"   fill="#8a7860"/>
+        <polygon points="120,150 220,20 320,150" fill="#9a8870"/>
+        <polygon points="280,150 380,45 480,150" fill="#8a7860"/>
+        <polygon points="420,150 500,60 560,150" fill="#7a6850"/>
+        <!-- Bare si cabluri -->
+        <line x1="80"  y1="40"  x2="80"  y2="150" stroke="#c0392b" stroke-width="4"/>
+        <line x1="220" y1="20"  x2="220" y2="150" stroke="#c0392b" stroke-width="4"/>
+        <line x1="380" y1="45"  x2="380" y2="150" stroke="#c0392b" stroke-width="4"/>
+        <line x1="60"  y1="90"  x2="140" y2="78"  stroke="#6a5a48" stroke-width="2.5"/>
+        <line x1="142" y1="76"  x2="250" y2="60"  stroke="#6a5a48" stroke-width="2.5"/>
+        <line x1="248" y1="62"  x2="358" y2="72"  stroke="#6a5a48" stroke-width="2.5"/>
+        <line x1="360" y1="70"  x2="450" y2="88"  stroke="#6a5a48" stroke-width="2.5"/>
+        <circle cx="80"  cy="40"  r="8" fill="#e74c3c"/>
+        <circle cx="220" cy="20"  r="8" fill="#e74c3c"/>
+        <circle cx="380" cy="45"  r="8" fill="#e74c3c"/>
+        <!-- Alpinist -->
+        <circle cx="165" cy="70" r="9" fill="#2c3e50"/>
+        <rect x="161" y="79" width="8" height="18" fill="#2c3e50" rx="4"/>
+        <line x1="165" y1="88" x2="155" y2="105" stroke="#2c3e50" stroke-width="3"/>
+        <line x1="165" y1="88" x2="175" y2="105" stroke="#2c3e50" stroke-width="3"/>
+      </svg>
+      <div class="act-body">
+        <div class="act-tags">
+          <span class="act-tag tag-durata">2–8h (după traseu)</span>
+          <span class="act-tag tag-nivel tag-usor">Apt fizic</span>
+          <span class="act-tag" style="background:#f0f0f0;color:#555;border:1px solid #ddd;">White Wolf</span>
+        </div>
+        <h3>Via Ferrata — Baia de Fier</h3>
+        <p>Trasee echipate cu bare, scări și cabluri de siguranță pe pereții din Cheile Galbenului — organizate de <strong>Clubul Montan White Wolf</strong>. Pe traseele normale pot merge inclusiv copii de 6 ani cu puțin ajutor. Echipamentul de protecție se închiriază direct de la White Wolf. Noi te însoțim și te ajutăm să ajungi acolo.</p>
+        <div class="act-footer">
+          <div style="font-size:12px;color:var(--muted);line-height:1.4;">Echipament închiriat<br>de la Clubul White Wolf</div>
+          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Via Ferrata Baia de Fier')">Mă interesează</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Cheile Galbenului -->
+    <div class="act-card">
+      <svg class="act-img" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+        <rect width="560" height="240" fill="#6aaa50"/>
+        <!-- Cer -->
+        <rect width="560" height="100" fill="#7abce8"/>
+        <!-- Pereți cheie -->
+        <rect x="0"   y="60" width="160" height="180" fill="#8a7060"/>
+        <rect x="400" y="60" width="160" height="180" fill="#8a7060"/>
+        <!-- Vegetatie pe pereti -->
+        <rect x="0"   y="60" width="160" height="30" fill="#4a8030" opacity="0.6"/>
+        <rect x="400" y="60" width="160" height="30" fill="#4a8030" opacity="0.6"/>
+        <!-- Rau -->
+        <ellipse cx="280" cy="210" rx="100" ry="20" fill="#5aabda" opacity="0.7"/>
+        <rect x="220" y="170" width="120" height="50" fill="#5aabda" opacity="0.5"/>
+        <!-- Poteca -->
+        <rect x="240" y="100" width="80" height="150" fill="#c8a870" opacity="0.6"/>
+        <!-- Copaci in cheie -->
+        <polygon points="260,100 280,60 300,100" fill="#2a6e18"/>
+        <polygon points="250,110 270,75 290,110" fill="#3d8824"/>
+      </svg>
+      <div class="act-body">
+        <div class="act-tags">
+          <span class="act-tag tag-durata">½ zi</span>
+          <span class="act-tag tag-nivel tag-mediu">Mediu</span>
+        </div>
+        <h3>Cheile Galbenului — Explorare</h3>
+        <p>Plimbare prin cheile spectaculoase de pe râul Galben, cu pereți stâncoși, cascade și vegetație luxuriantă. Traseu parțial prin apă — bocanci impermeabili recomandați.</p>
+        <div class="act-footer">
+          <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
+          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Cheile Galbenului — Explorare')">Vreau să vin</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Transalpina -->
+    <div class="act-card">
+      <svg class="act-img" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4a9fd8"/>
+            <stop offset="100%" stop-color="#90ccee"/>
+          </linearGradient>
+        </defs>
+        <rect width="560" height="240" fill="url(#sky2)"/>
+        <circle cx="480" cy="50" r="32" fill="#f8d020" opacity="0.9"/>
+        <!-- Munti cu zapada -->
+        <polygon points="0,180 80,60 160,150 260,30 360,130 460,40 560,100 560,240 0,240" fill="#7090b8" opacity="0.5"/>
+        <polygon points="260,30 290,80 230,80" fill="white" opacity="0.65"/>
+        <polygon points="80,60  105,100 55,100" fill="white" opacity="0.55"/>
+        <polygon points="460,40  485,85  435,85" fill="white" opacity="0.6"/>
+        <!-- Munti verzi -->
+        <polygon points="0,200 90,100 200,170 320,80 440,160 560,110 560,240 0,240" fill="#4a8840"/>
+        <polygon points="0,220 100,160 220,200 340,150 460,200 560,170 560,240 0,240" fill="#2a6e18"/>
+        <!-- Sosea Transalpina -->
+        <path d="M20,230 Q140,180 280,140 Q420,100 540,130" stroke="#f0f0e0" stroke-width="6" fill="none"/>
+        <path d="M20,230 Q140,180 280,140 Q420,100 540,130" stroke="#c8a820" stroke-width="2" fill="none" stroke-dasharray="14,8"/>
+        <!-- Masina -->
+        <rect x="258" y="133" width="28" height="14" rx="4" fill="#3a6aba"/>
+        <rect x="262" y="129" width="20" height="8"  rx="3" fill="#5a8ada"/>
+      </svg>
+      <div class="act-body">
+        <div class="act-tags">
+          <span class="act-tag tag-durata">Zi întreagă</span>
+          <span class="act-tag tag-nivel tag-usor">Ușor</span>
+        </div>
+        <h3>Excursie Transalpina &amp; Lacul Vidra</h3>
+        <p>Turul celui mai înalt drum asfaltat din România — Transalpina (DN67C) — cu opriri la priveliști panoramice și Lacul Vidra. Transport inclus, plecare din fața pensiunii.</p>
+        <div class="act-footer">
+          <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
+          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Excursie Transalpina & Lacul Vidra')">Vreau să vin</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Atelier bucatarie -->
+    <div class="act-card">
+      <svg class="act-img" viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg">
+        <rect width="560" height="240" fill="#f5e8d0"/>
+        <!-- Masa -->
+        <rect x="80" y="130" width="400" height="20" rx="4" fill="#b8863c"/>
+        <rect x="100" y="150" width="20" height="60" rx="4" fill="#966c2e"/>
+        <rect x="440" y="150" width="20" height="60" rx="4" fill="#966c2e"/>
+        <!-- Oala mare -->
+        <ellipse cx="200" cy="130" rx="55" ry="18" fill="#6a6a6a"/>
+        <rect x="145" y="90" width="110" height="42" rx="8" fill="#7a7a7a"/>
+        <ellipse cx="200" cy="90" rx="55" ry="14" fill="#8a8a8a"/>
+        <!-- Abur -->
+        <path d="M185,85 Q180,70 185,58" stroke="white" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>
+        <path d="M200,83 Q195,65 200,52" stroke="white" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>
+        <path d="M215,85 Q210,70 215,58" stroke="white" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>
+        <!-- Mamaliga / castron -->
+        <ellipse cx="360" cy="125" rx="50" ry="16" fill="#e8c870"/>
+        <rect x="310" y="100" width="100" height="26" rx="6" fill="#d4b050"/>
+        <ellipse cx="360" cy="100" rx="50" ry="14" fill="#e8c870"/>
+        <!-- Legume -->
+        <circle cx="310" cy="110" r="12" fill="#e84040" opacity="0.8"/>
+        <circle cx="420" cy="112" r="10" fill="#48a820" opacity="0.8"/>
+        <circle cx="450" cy="108" r="8"  fill="#e84040" opacity="0.7"/>
+        <!-- Lingura -->
+        <line x1="460" y1="80" x2="420" y2="120" stroke="#8a6030" stroke-width="4"/>
+        <ellipse cx="464" cy="76" rx="10" ry="7" fill="#9a7040" transform="rotate(-30,464,76)"/>
+      </svg>
+      <div class="act-body">
+        <div class="act-tags">
+          <span class="act-tag tag-durata">3 ore</span>
+          <span class="act-tag tag-nivel tag-usor">Toată lumea</span>
+        </div>
+        <h3>Atelier de bucătărie oltenească</h3>
+        <p>Învață să gătești sarmale, tocană cu mămăligă și prăjituri tradiționale alături de gazda pensiunii. La final, degustăm împreună. Potrivit pentru cupluri, familii și grupuri.</p>
+        <div class="act-footer">
+          <div class="act-price" style="color:var(--forest);font-size:1rem;font-family:'Inter',sans-serif;font-weight:600;">🎁 Gratuit pentru oaspeți</div>
+          <a href="#rezervare" class="btn-rezerva" onclick="selectAct('Atelier de bucătărie oltenească')">Vreau să vin</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INFO -->
+<div class="section-full bg-sky">
+  <div class="inner">
+    <div class="eyebrow">Informații utile</div>
+    <h2>Înainte să pleci la drum</h2>
+    <p class="lead">Ce trebuie să știi pentru o experiență reușită.</p>
+    <div class="info-boxes">
+      <div class="info-box">
+        <div class="info-box-icon">🥾</div>
+        <h4>Echipament</h4>
+        <p>Bocanci de munte și îmbrăcăminte în straturi. Noi furnizăm echipament de siguranță pentru via ferrata.</p>
+      </div>
+      <div class="info-box">
+        <div class="info-box-icon">👥</div>
+        <h4>Grup minim</h4>
+        <p>Activitățile pornesc de la 2 persoane. Pentru grupuri mari sau date speciale contactați-ne direct.</p>
+      </div>
+      <div class="info-box">
+        <div class="info-box-icon">🌤️</div>
+        <h4>Condiții meteo</h4>
+        <p>Activitățile pot fi reprogramate gratuit cu 24h înainte în caz de condiții meteo nefavorabile.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FORMULAR REZERVARE -->
+<section class="section" id="rezervare">
+  <div class="eyebrow" style="color:var(--amber)">Înscriere</div>
+  <h2>Vreau să vin cu tine!</h2>
+  <p class="lead">Lasă-ți datele și te anunțăm când planificăm următoarea ieșire. Fără costuri, fără obligații — doar bucuria de a fi în natură.</p>
+  <div class="form-wrap">
+    <form id="actForm" onsubmit="handleSubmit(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nume">Nume și prenume</label>
+          <input type="text" id="nume" name="nume" placeholder="Ion Popescu" required>
+        </div>
+        <div class="form-group">
+          <label for="telefon">Telefon</label>
+          <input type="tel" id="telefon" name="telefon" placeholder="07XX XXX XXX" required>
+        </div>
+        <div class="form-group full">
+          <label for="activitate">Activitate dorită</label>
+          <select id="activitate" name="activitate" required>
+            <option value="" disabled selected>Alege activitatea...</option>
+            <option>Drumeție ghidată Munții Parâng — 80 lei/pers.</option>
+            <option>Via Ferrata Baia de Fier — 120 lei/pers.</option>
+            <option>Cheile Galbenului — Explorare — 70 lei/pers.</option>
+            <option>Excursie Transalpina &amp; Lacul Vidra — 100 lei/pers.</option>
+            <option>Atelier de bucătărie oltenească — 60 lei/pers.</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="data">Data dorită</label>
+          <input type="date" id="data" name="data" required>
+        </div>
+        <div class="form-group">
+          <label for="persoane">Număr de persoane</label>
+          <select id="persoane" name="persoane">
+            <option>2 persoane</option>
+            <option>3 persoane</option>
+            <option>4 persoane</option>
+            <option>5–8 persoane</option>
+            <option>9–15 persoane</option>
+            <option>Grup mai mare de 15</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="mesaj">Mențiuni (opțional)</label>
+          <textarea id="mesaj" name="mesaj" placeholder="Nivel experiență, nevoi speciale, întrebări..."></textarea>
+        </div>
+      </div>
+      <button type="submit" class="btn-submit">Înscrie-mă!</button>
+      <p class="form-note">Te anunțăm noi când plecăm — gratuit, fără nicio obligație.</p>
+    </form>
+    <div class="success-box" id="successBox">
+      <div class="checkmark">🏔️</div>
+      <h3>Super, te-am înregistrat!</h3>
+      <p>Te anunțăm noi când planificăm următoarea ieșire. Ne vedem la munte! 🏔️</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta-banner">
+    <div>
+      <h2>Cauți și cazare?</h2>
+      <p>Combină activitățile cu un sejur la Cuib de Dac — camere de la 150 lei/noapte.</p>
+    </div>
+    <a href="cuib_de_dac.html#rezervare" class="btn-cta">Rezervă cameră</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">
+    <svg width="28" height="28" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="9" fill="#dff0d2"/>
+      <polygon points="8,28 13,13 18,28"  fill="#2a6e18"/>
+      <polygon points="14,28 20,8  26,28"  fill="#3d8824"/>
+      <polygon points="22,28 26,17 30,28" fill="#2a6e18"/>
+      <path d="M4,29 Q18,20 32,29" stroke="#c07010" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M6,31 Q18,24 30,31" stroke="#f8c030" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="28" cy="9" r="2.5" fill="#f8c030"/>
+    </svg>
+    <div class="foot-brand">Cuib de Dac</div>
+  </div>
+  <div class="foot-divider"></div>
+  <p>Str. Viorelelor nr. 31, Baia de Fier, Gorj · <a href="tel:0785612368">0785 612 368</a></p>
+  <p style="margin-top:8px;"><a href="cuib_de_dac.html">← Înapoi la pagina principală</a></p>
+  <p style="margin-top:12px;font-size:12px;">© 2026 Pensiunea Cuib de Dac · Toate drepturile rezervate</p>
+</footer>
+
+<script>
+  function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
+  function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('data').min = today;
+
+  function selectAct(name) {
+    const sel = document.getElementById('activitate');
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].text.startsWith(name.split('&')[0].trim())) {
+        sel.selectedIndex = i; break;
+      }
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    document.getElementById('actForm').style.display    = 'none';
+    document.getElementById('successBox').style.display = 'block';
+  }
+</script>
+</body>
+</html>
