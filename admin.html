@@ -459,7 +459,10 @@ function confirmCerere(id) {
   // Adaugă în rezervari
   if (checkIn && checkOut && camCod.length) {
     var rezRef = db.collection('rezervari').doc();
-    batch.set(rezRef, { s: checkIn, e: checkOut, c: camCod, sursa: 'cerere_' + id });
+    batch.set(rezRef, { s: checkIn, e: checkOut, c: camCod, sursa: 'cerere_' + id,
+      clientName:  c.name      || c.from_name  || '',
+      clientEmail: c.email     || c.from_email || '',
+      camera:      c.camera    || '' });
   }
   // Actualizează statusul cererii
   batch.update(db.collection('cereri').doc(id), { status: 'confirmed' });
@@ -635,13 +638,14 @@ function showCancelModal() {
   var d = _cancelRezData || {};
   var infoEl = document.getElementById('cancelClientInfo');
   var emailSec = document.getElementById('cancelEmailSection');
-  if (_cancelCerere) {
-    var c = _cancelCerere;
+  var clientEmail2 = (_cancelCerere && (_cancelCerere.email || _cancelCerere.from_email)) || d.clientEmail || '';
+  if (_cancelCerere || clientEmail2) {
+    var c = _cancelCerere || {};
     infoEl.innerHTML = '<p style="margin:0 0 12px;font-size:0.9rem;color:#444;">' +
-      '<strong>Client:</strong> ' + esc(c.name || c.from_name || '—') +
-      ' &nbsp;|&nbsp; ' + esc(c.email || c.from_email || '—') +
+      '<strong>Client:</strong> ' + esc(c.name || c.from_name || d.clientName || '—') +
+      ' &nbsp;|&nbsp; ' + esc(c.email || c.from_email || d.clientEmail || '—') +
       '<br><strong>Perioadă:</strong> ' + esc(fmtDate(d.s||'')) + ' → ' + esc(fmtDate(d.e||'')) +
-      '<br><strong>Cameră:</strong> ' + esc(c.camera || (d.c||[]).join(', ') || '—') + '</p>';
+      '<br><strong>Cameră:</strong> ' + esc(c.camera || d.camera || (d.c||[]).join(', ') || '—') + '</p>';
     emailSec.style.display = 'block';
     var defaultMsg = 'Stimate/ă ' + (c.name || c.from_name || 'client') + ',\n\n' +
       'Vă informăm că rezervarea dumneavoastră pentru perioada ' +
@@ -667,17 +671,35 @@ function confirmCancel(sendEmail) {
   if (!id) return;
   closeCancelModal();
 
-  if (sendEmail && _cancelCerere) {
+  if (sendEmail) {
     var motiv  = document.getElementById('cancelMotiv').value.trim();
-    var c      = _cancelCerere;
-    var clientEmail = c.email || c.from_email || '';
+    // Folosim datele din _cancelCerere sau, dacă cererea a fost ștearsă, din datele salvate în rezervare
+    var d = _cancelRezData || {};
+    var clientEmail = '';
+    var clientName  = 'Stimate client';
+    var clientCam   = (d.c || []).join(', ') || '—';
+    var clientIn    = fmtDate(d.s || '') || '—';
+    var clientOut   = fmtDate(d.e || '') || '—';
+    if (_cancelCerere) {
+      var c = _cancelCerere;
+      clientEmail = c.email     || c.from_email || '';
+      clientName  = c.name      || c.from_name  || 'Stimate client';
+      clientCam   = c.camera    || clientCam;
+      clientIn    = fmtDate(c.check_in)  || clientIn;
+      clientOut   = fmtDate(c.check_out) || clientOut;
+    } else if (d.clientEmail) {
+      // Date salvate direct în rezervare la momentul confirmării
+      clientEmail = d.clientEmail;
+      clientName  = d.clientName  || clientName;
+      clientCam   = d.camera      || clientCam;
+    }
     if (clientEmail && motiv) {
       emailjs.send(EMAILJS_SERVICE, EMAILJS_TPL_RESPNG, {
-        name:      c.name || c.from_name || 'Stimate client',
+        name:      clientName,
         email:     clientEmail,
-        camera:    c.camera || '—',
-        check_in:  fmtDate(c.check_in)  || '—',
-        check_out: fmtDate(c.check_out) || '—',
+        camera:    clientCam,
+        check_in:  clientIn,
+        check_out: clientOut,
         motiv:     motiv
       }).catch(function(err){ console.warn('[EmailJS] Eroare email anulare:', err); });
     }
