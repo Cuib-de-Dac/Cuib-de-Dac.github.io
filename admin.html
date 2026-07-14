@@ -422,8 +422,8 @@ function confirmCerere(id) {
         name:         c.name || c.from_name || 'Stimate client',
         email:        clientEmail,
         camera:       c.camera || '—',
-        check_in:     checkIn,
-        check_out:    checkOut,
+        check_in:     fmtDate(checkIn),
+        check_out:    fmtDate(checkOut),
         adulti:       c.adulti || '—',
         copii:        c.copii  || '0',
         total:        totalRON,
@@ -466,8 +466,8 @@ function confirmReject() {
           name:      c.name || c.from_name || 'Stimate client',
           email:     clientEmail,
           camera:    c.camera    || '—',
-          check_in:  c.check_in  || '—',
-          check_out: c.check_out || '—',
+          check_in:  fmtDate(c.check_in)  || '—',
+          check_out: fmtDate(c.check_out) || '—',
           motiv:     motiv
         }).catch(function(err) {
           console.warn('[EmailJS] Eroare trimitere email respingere:', err);
@@ -475,6 +475,14 @@ function confirmReject() {
       }
     }
   }).catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+function fmtDate(d) {
+  // Converts YYYY-MM-DD → DD.MM.YYYY for display in emails
+  if (!d || typeof d !== 'string') return d || '—';
+  if (d.includes('.')) return d; // already display format
+  var p = d.split('-');
+  return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : d;
 }
 
 function camToCode(cam) {
