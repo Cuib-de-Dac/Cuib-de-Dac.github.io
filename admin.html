@@ -352,9 +352,33 @@ function listenCereri() {
 function renderCereri() {
   var el = document.getElementById('cereriList');
   if (!allCereri.length) { el.innerHTML = '<div class="empty-msg">Nicio cerere primită încă.</div>'; return; }
-  el.innerHTML = allCereri.map(function(c) {
+
+  // Auto-ascunde cereri confirmate la/după ziua de check-in
+  var azi = new Date(); azi.setHours(0,0,0,0);
+  var visible = allCereri.filter(function(c) {
+    if (c.status === 'confirmed' && c.check_in) {
+      var ci = new Date(c.check_in); ci.setHours(0,0,0,0);
+      return ci > azi;
+    }
+    return true;
+  });
+
+  if (!visible.length) { el.innerHTML = '<div class="empty-msg">Nicio cerere activă de afișat.</div>'; return; }
+
+  el.innerHTML = visible.map(function(c) {
     var ts = c.timestamp ? new Date(c.timestamp.seconds * 1000).toLocaleString('ro-RO') : '—';
     var status = c.status || 'pending';
+    var actiuni = '';
+    if (status === 'pending') {
+      actiuni = '<div class="cerere-actions">' +
+        '<button class="btn-confirm" onclick="confirmCerere(\'' + c.id + '\')">✅ Confirmă rezervarea</button>' +
+        '<button class="btn-reject"  onclick="rejectCerere(\'' + c.id + '\')">❌ Respinge</button>' +
+        '</div>';
+    } else {
+      actiuni = '<div class="cerere-actions" style="justify-content:flex-end;">' +
+        '<button class="btn-delete" style="font-size:0.8rem;padding:6px 14px;" onclick="deleteCerere(\'' + c.id + '\',\'' + status + '\')">🗑️ Șterge din listă</button>' +
+        '</div>';
+    }
     return '<div class="cerere-card ' + status + '">' +
       '<div class="cerere-header">' +
         '<div>' +
@@ -373,11 +397,7 @@ function renderCereri() {
         '<span>🏷️ <strong>Tip:</strong> ' + esc(c.mod || 'Rezervare standard') + '</span>' +
       '</div>' +
       (c.mesaj && c.mesaj !== '—' ? '<div class="cerere-mesaj">💬 ' + esc(c.mesaj) + '</div>' : '') +
-      (status === 'pending' ?
-        '<div class="cerere-actions">' +
-          '<button class="btn-confirm" onclick="confirmCerere(\'' + c.id + '\')">✅ Confirmă rezervarea</button>' +
-          '<button class="btn-reject"  onclick="rejectCerere(\'' + c.id + '\')">❌ Respinge</button>' +
-        '</div>' : '') +
+      actiuni +
     '</div>';
   }).join('');
 }
@@ -532,9 +552,90 @@ function listenRezervari() {
   });
 }
 
+// ── Cancel / Delete rezervare ────────────────────────────────
+var _cancelRezId = null;
+var _cancelCerere = null;
+var _cancelRezData = null;
+
 function deleteRezervare(id) {
-  if (!confirm('Ștergi această rezervare? Datele vor fi deblocate în calendar.')) return;
+  db.collection('rezervari').doc(id).get().then(function(doc) {
+    if (!doc.exists) return;
+    var data = doc.data();
+    _cancelRezId   = id;
+    _cancelRezData = data;
+    _cancelCerere  = null;
+    var sursa = data.sursa || '';
+    if (sursa.startsWith('cerere_')) {
+      var cerId = sursa.replace('cerere_', '');
+      _cancelCerere = allCereri.find(function(x){ return x.id === cerId; }) || null;
+    }
+    showCancelModal();
+  }).catch(function(e){ alert('Eroare: ' + e.message); });
+}
+
+function showCancelModal() {
+  var d = _cancelRezData || {};
+  var infoEl = document.getElementById('cancelClientInfo');
+  var emailSec = document.getElementById('cancelEmailSection');
+  if (_cancelCerere) {
+    var c = _cancelCerere;
+    infoEl.innerHTML = '<p style="margin:0 0 12px;font-size:0.9rem;color:#444;">' +
+      '<strong>Client:</strong> ' + esc(c.name || c.from_name || '—') +
+      ' &nbsp;|&nbsp; ' + esc(c.email || c.from_email || '—') +
+      '<br><strong>Perioadă:</strong> ' + esc(fmtDate(d.s||'')) + ' → ' + esc(fmtDate(d.e||'')) +
+      '<br><strong>Cameră:</strong> ' + esc(c.camera || (d.c||[]).join(', ') || '—') + '</p>';
+    emailSec.style.display = 'block';
+    var defaultMsg = 'Stimate/ă ' + (c.name || c.from_name || 'client') + ',\n\n' +
+      'Vă informăm că rezervarea dumneavoastră pentru perioada ' +
+      fmtDate(d.s||'') + ' – ' + fmtDate(d.e||'') +
+      ' a trebuit să fie anulată din motive neprevăzute.\n\n' +
+      'Ne cerem scuze pentru inconveniență și sperăm să vă avem ca oaspeți cu altă ocazie.\n\n' +
+      'Cu stimă,\nEchipa Cuib de Dac';
+    document.getElementById('cancelMotiv').value = defaultMsg;
+  } else {
+    infoEl.innerHTML = '<p style="margin:0 0 12px;font-size:0.9rem;color:#666;">Blocare manuală — niciun client asociat.</p>';
+    emailSec.style.display = 'none';
+  }
+  document.getElementById('cancelModal').style.display = 'flex';
+}
+
+function closeCancelModal() {
+  document.getElementById('cancelModal').style.display = 'none';
+  _cancelRezId = _cancelCerere = _cancelRezData = null;
+}
+
+function confirmCancel(sendEmail) {
+  var id = _cancelRezId;
+  if (!id) return;
+  closeCancelModal();
+
+  if (sendEmail && _cancelCerere) {
+    var motiv  = document.getElementById('cancelMotiv').value.trim();
+    var c      = _cancelCerere;
+    var clientEmail = c.email || c.from_email || '';
+    if (clientEmail && motiv) {
+      emailjs.send(EMAILJS_SERVICE, EMAILJS_TPL_RESPNG, {
+        name:      c.name || c.from_name || 'Stimate client',
+        email:     clientEmail,
+        camera:    c.camera || '—',
+        check_in:  fmtDate(c.check_in)  || '—',
+        check_out: fmtDate(c.check_out) || '—',
+        motiv:     motiv
+      }).catch(function(err){ console.warn('[EmailJS] Eroare email anulare:', err); });
+    }
+  }
+
   db.collection('rezervari').doc(id).delete()
+    .catch(function(e){ alert('Eroare ștergere: ' + e.message); });
+}
+
+// ── Ștergere cerere din listă (confirmate / respinse) ────────
+function deleteCerere(id, status) {
+  var msg = status === 'confirmed'
+    ? 'Ștergi această cerere din listă?\nNOTĂ: Rezervarea din calendar rămâne activă. Șterge-o separat din tabel dacă e nevoie.'
+    : 'Ștergi această cerere respinsă din listă?';
+  if (!confirm(msg)) return;
+  db.collection('cereri').doc(id).delete()
     .catch(function(e){ alert('Eroare: ' + e.message); });
 }
 
@@ -574,6 +675,24 @@ function esc(s) {
       <div style="display:flex;gap:12px;margin-top:18px;justify-content:flex-end;">
         <button onclick="closeRejectModal()" style="padding:10px 20px;border:2px solid #ccc;border-radius:8px;background:#fff;color:#666;font-size:0.9rem;cursor:pointer;">Anulează</button>
         <button onclick="confirmReject()" style="padding:10px 20px;border:none;border-radius:8px;background:#c0392b;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;">Trimite respingerea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal anulare rezervare confirmată -->
+  <div id="cancelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1001;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:32px;width:520px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+      <h3 style="margin:0 0 6px;color:#b94040;font-size:1.2rem;">⚠️ Anulează rezervarea</h3>
+      <p style="margin:0 0 16px;color:#666;font-size:0.9rem;">Rezervarea confirmată va fi ștearsă din calendar. Această acțiune nu poate fi anulată.</p>
+      <div id="cancelClientInfo"></div>
+      <div id="cancelEmailSection">
+        <label style="display:block;font-size:0.85rem;font-weight:600;color:#444;margin-bottom:6px;">Mesaj de anulare (trimis clientului):</label>
+        <textarea id="cancelMotiv" rows="6" style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.85rem;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:flex-end;">
+        <button onclick="closeCancelModal()" style="padding:10px 18px;border:2px solid #ccc;border-radius:8px;background:#fff;color:#666;font-size:0.85rem;cursor:pointer;">Anulează</button>
+        <button onclick="confirmCancel(false)" style="padding:10px 18px;border:2px solid #c0392b;border-radius:8px;background:#fff;color:#c0392b;font-size:0.85rem;font-weight:600;cursor:pointer;">Șterge fără email</button>
+        <button id="cancelSendBtn" onclick="confirmCancel(true)" style="padding:10px 18px;border:none;border-radius:8px;background:#c0392b;color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;">📧 Trimite email + Șterge</button>
       </div>
     </div>
   </div>
