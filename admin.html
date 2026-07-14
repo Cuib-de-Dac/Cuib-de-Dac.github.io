@@ -241,8 +241,8 @@ function initAdminFlatpickr() {
     locale: 'ro',
     dateFormat: 'Y-m-d',
     minDate: 'today',
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      if (ziAdminAreRezervare(dObj)) dayElem.classList.add('has-rezervare');
+    onDayCreate: function(currentdates, dStr, fp, dayElem) {
+      if (dayElem.dateObj && ziAdminAreRezervare(dayElem.dateObj)) dayElem.classList.add('has-rezervare');
     },
     onChange: function(sel) {
       if (fpAdminOut) {
@@ -255,8 +255,8 @@ function initAdminFlatpickr() {
     locale: 'ro',
     dateFormat: 'Y-m-d',
     minDate: 'today',
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      if (ziAdminAreRezervare(dObj)) dayElem.classList.add('has-rezervare');
+    onDayCreate: function(currentdates, dStr, fp, dayElem) {
+      if (dayElem.dateObj && ziAdminAreRezervare(dayElem.dateObj)) dayElem.classList.add('has-rezervare');
     }
   });
 }
@@ -504,8 +504,6 @@ function listenRezervari() {
     var rows = [];
     snap.forEach(function(doc) { rows.push({ id: doc.id, ...doc.data() }); });
     ADMIN_REZERVARI = rows;
-    if (fpAdminIn) fpAdminIn.redraw();
-    if (fpAdminOut) fpAdminOut.redraw();
     var tbody = document.getElementById('rezTable');
     if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
     else tbody.innerHTML = rows.map(function(r) {
