@@ -534,13 +534,17 @@ function fmtDate(d) {
   return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : d;
 }
 
+// Parsează data ca dată locală (identic cu toD() din index.html — evită bug-uri UTC)
+function toD_adm(s) { var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+
 // Returnează care camere sunt LIBERE pentru intervalul dat (bazat pe rezervări confirmate)
 function getCameraLibere(sStr, eStr) {
-  var s = new Date(sStr), e = new Date(eStr);
+  var s = toD_adm(sStr), e = toD_adm(eStr);
   var blocked = {};
   (ADMIN_REZERVARI || []).forEach(function(r) {
-    var rs = new Date(r.s);
-    var re = new Date(r.e);
+    if (!r.s || !r.e) return;
+    var rs = toD_adm(r.s);
+    var re = toD_adm(r.e);
     re.setDate(re.getDate() + 1); // +1 zi curățenie (identic cu index.html)
     if (s < re && e > rs) {
       (r.c || []).forEach(function(c) { blocked[c] = true; });
