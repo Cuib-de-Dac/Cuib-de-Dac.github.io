@@ -1627,14 +1627,15 @@
       }
     }
 
-    // 5. Economic: paturi pliante în loc de cameră (total impar — doar cu copil)
-    if (total >= 3 && total <= 9 && nCopii >= 1) {
-      var nEco = Math.floor(total / 2);
-      var nBed = total - nEco * 2;
-      if (nBed === 1 && nEco >= 1 && nEco <= avD && avPl >= 1) {
-        var ecoVal = duble(nEco) + ' + ' + pliante(1);
-        opts.push({ label: ecoVal, price: fmt(nEco * D + PL), tag: 'Economic', tagCls: 'tag-eco',
-          note: 'Pat pliant: 50 lei/noapte · Rezervat copiilor (2 adulți + 1 copil)', val: ecoVal });
+    // 5. Camere duble + paturi pliante (fără apartament) — pentru grupuri cu copii
+    // N_camere = max(ceil(nAdulti/2), nCopii): destule camere pt adulți ȘI câte 1 pliant/cameră pt copii
+    if (nCopii >= 1 && nAdulti >= 2) {
+      var nDubNec = Math.max(Math.ceil(nAdulti / 2), nCopii);
+      if (nDubNec >= 1 && nDubNec <= 4 && nDubNec <= avD && nCopii <= avPl) {
+        var val5 = duble(nDubNec) + ' + ' + pliante(nCopii);
+        opts.push({ label: val5, price: fmt(nDubNec * D + nCopii * PL), tag: 'Economic', tagCls: 'tag-eco',
+          note: 'Câte 2 adulți per cameră · ' + nCopii + (nCopii === 1 ? ' pat pliant' : ' paturi pliante') + ' pentru copii (50 lei/noapte fiecare)',
+          val: val5 });
       }
     }
 

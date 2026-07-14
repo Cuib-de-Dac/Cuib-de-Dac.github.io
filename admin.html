@@ -495,6 +495,12 @@ function camToCode(cam) {
     return ['ap', 'p1', 'e1', 'e2', 'e3'].slice(0, n + 1);
   }
   if (cam.includes('apart')) return ['ap'];
+  // N camere duble (cu sau fără paturi pliante), fără apartament — verifică ÎNAINTE de codurile individuale
+  if (cam.includes('camer')) {
+    var m2 = cam.match(/(\d+)\s*camer/);
+    var n2 = m2 ? Math.min(parseInt(m2[1]), 4) : 1;
+    return ['p1', 'e1', 'e2', 'e3'].slice(0, n2);
+  }
   if (cam.includes('p1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['p1'];
   if (cam.includes('e1') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['e1'];
   if (cam.includes('e2') || cam.includes('dubla 3') || cam.includes('dublă 3')) return ['e2'];
