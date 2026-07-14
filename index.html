@@ -1203,29 +1203,25 @@
   };
 
   var db = null;
-  if (FB_CONFIG.apiKey !== "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGUO9eQ") {
-    try {
-      firebase.initializeApp(FB_CONFIG);
-      db = firebase.firestore();
-      // Ascultă colecția 'rezervari' în timp real — actualizare automată la orice modificare
-      db.collection('rezervari').onSnapshot(function(snap) {
-        REZERVARI = [];
-        snap.forEach(function(doc) {
-          var d = doc.data();
-          if (d.s && d.e && Array.isArray(d.c)) REZERVARI.push({ s: d.s, e: d.e, c: d.c });
-        });
-        // Re-calculează disponibilitatea dacă datele sunt deja selectate
-        if (typeof fpIn !== 'undefined')  fpIn.redraw();
-        if (typeof fpOut !== 'undefined') fpOut.redraw();
-        if (selCheckin && selCheckout) onDateChange();
-      }, function(err) {
-        console.warn('[Cuib de Dac] Firestore error:', err.message);
+  try {
+    firebase.initializeApp(FB_CONFIG);
+    db = firebase.firestore();
+    // Ascultă colecția 'rezervari' în timp real — actualizare automată la orice modificare
+    db.collection('rezervari').onSnapshot(function(snap) {
+      REZERVARI = [];
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        if (d.s && d.e && Array.isArray(d.c)) REZERVARI.push({ s: d.s, e: d.e, c: d.c });
       });
-    } catch(e) {
-      console.warn('[Cuib de Dac] Firebase init error:', e.message);
-    }
-  } else {
-    console.info('[Cuib de Dac] Firebase necompletat — disponibilitate pe date locale.');
+      // Re-calculează disponibilitatea dacă datele sunt deja selectate
+      if (typeof fpIn !== 'undefined')  fpIn.redraw();
+      if (typeof fpOut !== 'undefined') fpOut.redraw();
+      if (selCheckin && selCheckout) onDateChange();
+    }, function(err) {
+      console.warn('[Cuib de Dac] Firestore error:', err.message);
+    });
+  } catch(e) {
+    console.warn('[Cuib de Dac] Firebase init error:', e.message);
   }
 
   // ── Inventar camere ──────────────────────────────────────────

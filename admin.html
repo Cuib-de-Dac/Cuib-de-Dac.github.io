@@ -377,11 +377,30 @@ function confirmCerere(id) {
   }).catch(function(e){ alert('Eroare: ' + e.message); });
 }
 
+var _rejectId = null;
+
 function rejectCerere(id) {
-  if (!confirm('Respingi această cerere?')) return;
+  _rejectId = id;
+  document.getElementById('rejectMotiv').value = '';
+  var modal = document.getElementById('rejectModal');
+  modal.style.display = 'flex';
+  setTimeout(function(){ document.getElementById('rejectMotiv').focus(); }, 100);
+}
+
+function closeRejectModal() {
+  document.getElementById('rejectModal').style.display = 'none';
+  _rejectId = null;
+}
+
+function confirmReject() {
+  var motiv = document.getElementById('rejectMotiv').value.trim();
+  if (!motiv) { alert('Te rog completează motivul respingerii.'); return; }
+  var id = _rejectId;
+  if (!id) return;
+  closeRejectModal();
+
   var c = allCereri.find(function(x){ return x.id === id; });
   db.collection('cereri').doc(id).update({ status: 'rejected' }).then(function() {
-    // Trimite email de respingere clientului
     if (c) {
       var clientEmail = c.email || c.from_email || '';
       if (clientEmail) {
@@ -390,7 +409,8 @@ function rejectCerere(id) {
           email:     clientEmail,
           camera:    c.camera    || '—',
           check_in:  c.check_in  || '—',
-          check_out: c.check_out || '—'
+          check_out: c.check_out || '—',
+          motiv:     motiv
         }).catch(function(err) {
           console.warn('[EmailJS] Eroare trimitere email respingere:', err);
         });
@@ -465,5 +485,19 @@ function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 </script>
+  <!-- Modal motiv respingere -->
+  <div id="rejectModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;padding:32px;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+      <h3 style="margin:0 0 8px;color:#4a3728;font-size:1.2rem;">Respinge cererea</h3>
+      <p style="margin:0 0 18px;color:#666;font-size:0.9rem;">Clientul va primi un email cu motivul respingerii.</p>
+      <label style="display:block;font-size:0.85rem;font-weight:600;color:#444;margin-bottom:6px;">Motiv respingere *</label>
+      <textarea id="rejectMotiv" rows="4" placeholder="Ex: Perioada solicitată este deja rezervată. Vă invităm să alegeți alte date..." style="width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;resize:vertical;outline:none;box-sizing:border-box;"></textarea>
+      <div style="display:flex;gap:12px;margin-top:18px;justify-content:flex-end;">
+        <button onclick="closeRejectModal()" style="padding:10px 20px;border:2px solid #ccc;border-radius:8px;background:#fff;color:#666;font-size:0.9rem;cursor:pointer;">Anulează</button>
+        <button onclick="confirmReject()" style="padding:10px 20px;border:none;border-radius:8px;background:#c0392b;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;">Trimite respingerea</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
