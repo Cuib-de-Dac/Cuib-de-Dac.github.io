@@ -1608,7 +1608,8 @@
       if (d > Math.min(avD, 4)) return false;      // depășește disponibilul
       var spots = d * 2 + (ap ? 4 : 0);
       if (spots < nAdulti) return false;           // adulți fără pat normal
-      if (pl < 0 || pl > nCopii || pl > avPl) return false; // pliante invalide
+      var maxPl = d + (ap ? 2 : 0); // max pliante = nr dormitoare (CD=1, AP=2)
+      if (pl < 0 || pl > nCopii || pl > avPl || pl > maxPl) return false;
       if (spots + pl < total) return false;        // nu toți au loc
       var lbl = makeLabel(d, ap, pl);
       for (var i = 0; i < opts.length; i++) if (opts[i].val === lbl) return false;
@@ -1622,7 +1623,9 @@
     }
 
     // ─── FĂRĂ APARTAMENT ─────────────────────────────────────────────────────
-    var d_min    = Math.ceil(nAdulti / 2);  // min camere ca adulții să aibă paturi
+    // d_min_valid: min camere astfel încât pl = total-2d <= maxPl = d → d >= ceil(total/3)
+    //             ȘI toți adulții au paturi: d >= ceil(nAdulti/2)
+    var d_min    = Math.max(Math.ceil(total / 3), Math.ceil(nAdulti / 2));
     var d_all    = Math.ceil(total / 2);    // camere pt toți (fără pliante)
 
     // Toți în paturi normale
@@ -1644,7 +1647,10 @@
 
     // ─── CU APARTAMENT ───────────────────────────────────────────────────────
     if (avA) {
-      var d_min_ap = Math.max(Math.ceil((nAdulti - 4) / 2), 0); // min camere extra pt adulți
+      // d_min_valid_ap: pl=total-4-2d <= maxPl=d+2 → d >= ceil((total-6)/3)
+      //                ȘI toți adulții au paturi: d >= ceil((nAdulti-4)/2)
+      var d_nec_ap = Math.max(Math.ceil((nAdulti - 4) / 2), 0);
+      var d_min_ap = Math.max(Math.ceil((total - 6) / 3), d_nec_ap, 0);
       var d_all_ap = Math.max(Math.ceil((total - 4) / 2), 0);    // camere pt toți cu ap
 
       // Min camere ap + pliante necesare
