@@ -440,9 +440,9 @@ function labelStatus(s) {
 function confirmCerere(id) {
   var c = allCereri.find(function(x){ return x.id === id; });
   if (!c) return;
-  var camCod = camToCode(c.camera || '');
   var checkIn  = c.check_in  || '';
   var checkOut = c.check_out || '';
+  var camCod = camToCode(c.camera || '', checkIn, checkOut);
 
   // Calculează nr. nopți și total estimat
   var totalRON = '—';
@@ -534,21 +534,44 @@ function fmtDate(d) {
   return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : d;
 }
 
-function camToCode(cam) {
-  // Mapează numele afișat al camerei la codul folosit în disponibilitate
+// Returnează care camere sunt LIBERE pentru intervalul dat (bazat pe rezervări confirmate)
+function getCameraLibere(sStr, eStr) {
+  var s = new Date(sStr), e = new Date(eStr);
+  var blocked = {};
+  (ADMIN_REZERVARI || []).forEach(function(r) {
+    var rs = new Date(r.s);
+    var re = new Date(r.e);
+    re.setDate(re.getDate() + 1); // +1 zi curățenie (identic cu index.html)
+    if (s < re && e > rs) {
+      (r.c || []).forEach(function(c) { blocked[c] = true; });
+    }
+  });
+  var liber = {};
+  ['ap','p1','e1','e2','e3'].forEach(function(r) { liber[r] = !blocked[r]; });
+  return liber;
+}
+
+function camToCode(cam, sStr, eStr) {
+  // Mapează numele afișat al camerei la coduri, alegând DOAR camerele libere pe datele date
   cam = (cam || '').toLowerCase();
-  // Combo apartament + camere duble — verifică ÎNAINTE de apartamentul singur
+  var liber = (sStr && eStr) ? getCameraLibere(sStr, eStr)
+                              : { ap:true, p1:true, e1:true, e2:true, e3:true };
+  var dLibere = ['p1','e1','e2','e3'].filter(function(r){ return liber[r]; });
+
+  // Combo apartament + camere duble
   if (cam.includes('apart') && cam.includes('camer')) {
     var m = cam.match(/(\d+)\s*camer/);
     var n = m ? Math.min(parseInt(m[1]), 4) : 4;
-    return ['ap', 'p1', 'e1', 'e2', 'e3'].slice(0, n + 1);
+    var result = liber['ap'] ? ['ap'] : [];
+    return result.concat(dLibere.slice(0, n));
   }
-  if (cam.includes('apart')) return ['ap'];
-  // N camere duble (cu sau fără paturi pliante), fără apartament — verifică ÎNAINTE de codurile individuale
+  // Doar apartament
+  if (cam.includes('apart')) return liber['ap'] ? ['ap'] : [];
+  // N camere duble (cu sau fără paturi pliante)
   if (cam.includes('camer')) {
     var m2 = cam.match(/(\d+)\s*camer/);
     var n2 = m2 ? Math.min(parseInt(m2[1]), 4) : 1;
-    return ['p1', 'e1', 'e2', 'e3'].slice(0, n2);
+    return dLibere.slice(0, n2);
   }
   if (cam.includes('p1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['p1'];
   if (cam.includes('e1') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['e1'];
