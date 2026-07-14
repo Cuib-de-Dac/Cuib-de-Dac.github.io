@@ -1645,8 +1645,8 @@
       }
     }
 
-    // ─── CU APARTAMENT ───────────────────────────────────────────────────────
-    if (avA) {
+    // ─── CU APARTAMENT ─── (doar când grupul are cel puțin 3 persoane) ──────
+    if (avA && total >= 3) {
       // d_min_valid_ap: pl=total-4-2d <= maxPl=d+2 → d >= ceil((total-6)/3)
       //                ȘI toți adulții au paturi: d >= ceil((nAdulti-4)/2)
       var d_nec_ap = Math.max(Math.ceil((nAdulti - 4) / 2), 0);
