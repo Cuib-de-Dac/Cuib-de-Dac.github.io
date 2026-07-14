@@ -378,11 +378,11 @@
     .combo-note { font-size:12px; color:var(--muted); margin-top:4px; line-height:1.4; }
     .combo-tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; flex-shrink:0; }
     .tag-rec  { background:var(--forest-dim); color:var(--forest); }
-    .tag-spa  { background:var(--sky-dim);    color:var(--sky); }
+    .tag-conf { background:#ddeeff; color:#1558a0; }
     .tag-eco  { background:var(--amber-dim);  color:var(--amber); }
-    .combo-card.selected .tag-rec { background:var(--forest); color:#fff; }
-    .combo-card.selected .tag-spa { background:var(--sky);    color:#fff; }
-    .combo-card.selected .tag-eco { background:var(--amber);  color:#fff; }
+    .combo-card.selected .tag-rec  { background:var(--forest); color:#fff; }
+    .combo-card.selected .tag-conf { background:#1558a0; color:#fff; }
+    .combo-card.selected .tag-eco  { background:var(--amber);  color:#fff; }
     .combo-price { font-size:13px; font-weight:600; color:var(--forest); white-space:nowrap; padding-top:2px; flex-shrink:0; }
     .success-box { display:none; text-align:center; padding:2.5rem 1rem; }
     .success-box .checkmark { font-size:3rem; margin-bottom:1rem; }
@@ -1625,7 +1625,7 @@
     //   spots = d*2 + ap*4 >= nAdulti     → toți adulții au loc în paturi normale
     //   pl = total - spots (pliante necesare) <= nCopii  → pliante doar pt copii
     //   pl <= avPl, d <= min(avD, 4)
-    function tryAdd(d, ap, pl, tag, tagCls) {
+    function tryAdd(d, ap, pl) {
       if (!ap && d === 0) return false;            // fără nicio cameră
       if (d > Math.min(avD, 4)) return false;      // depășește disponibilul
       var spots = d * 2 + (ap ? 4 : 0);
@@ -1636,9 +1636,13 @@
       var lbl = makeLabel(d, ap, pl);
       for (var i = 0; i < opts.length; i++) if (opts[i].val === lbl) return false;
       var rawPrice = d * D + (ap ? A : 0) + pl * PL;
+      var tag, tagCls;
+      if (pl > 0)             { tag = 'Economic';   tagCls = 'tag-eco'; }
+      else if (spots > total) { tag = 'Confort';    tagCls = 'tag-conf'; }
+      else                    { tag = 'Recomandat'; tagCls = 'tag-rec'; }
       opts.push({
         label: lbl, rawPrice: rawPrice, price: fmt(rawPrice),
-        tag: tag || null, tagCls: tagCls || 'tag-rec',
+        tag: tag, tagCls: tagCls,
         note: makeNote(d, ap, pl), val: lbl
       });
       return true;
@@ -1651,11 +1655,11 @@
     var d_all    = Math.ceil(total / 2);    // camere pt toți (fără pliante)
 
     // Toți în paturi normale
-    tryAdd(d_all, false, 0, total <= 2 ? 'Recomandat' : null, 'tag-rec');
+    tryAdd(d_all, false, 0);
 
     // Min camere pt adulți + pliante necesare pt copiii rămași
     if (d_min >= 1 && d_min < d_all) {
-      tryAdd(d_min, false, total - d_min * 2, 'Economic', 'tag-eco');
+      tryAdd(d_min, false, total - d_min * 2);
     }
 
     // Opțiune intermediară (d_all-1 camere, câteva pliante)
@@ -1663,7 +1667,7 @@
       var d_mid = d_all - 1;
       var pl_mid = total - d_mid * 2;
       if (d_mid >= d_min && pl_mid > 0) {
-        tryAdd(d_mid, false, pl_mid, 'Economic', 'tag-eco');
+        tryAdd(d_mid, false, pl_mid);
       }
     }
 
@@ -1677,20 +1681,20 @@
 
       // Min camere ap + pliante necesare
       var pl_min_ap = Math.max(total - (4 + d_min_ap * 2), 0);
-      tryAdd(d_min_ap, true, pl_min_ap, d_min_ap === 0 ? 'Recomandat' : null, 'tag-rec');
+      tryAdd(d_min_ap, true, pl_min_ap);
 
       // Opțiune intermediară ap
       if (d_all_ap > d_min_ap) {
         var d_ap_mid = d_all_ap - 1;
         var pl_ap_mid = Math.max(total - (4 + d_ap_mid * 2), 0);
         if (pl_ap_mid > 0) {
-          tryAdd(d_ap_mid, true, pl_ap_mid, 'Economic', 'tag-eco');
+          tryAdd(d_ap_mid, true, pl_ap_mid);
         }
       }
 
       // Toți în paturi normale cu apartament
       if (d_all_ap >= 1) {
-        tryAdd(d_all_ap, true, 0, 'Recomandat', 'tag-rec');
+        tryAdd(d_all_ap, true, 0);
       }
     }
 
