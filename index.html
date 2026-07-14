@@ -1278,23 +1278,45 @@
     return null;
   }
 
-  // returnează lista de combo-uri posibile (fără randare)
-  function getCombosDisp(total, disp) {
-    var D=240, A=400, PL=50;
-    var avD=disp.dubles, avA=disp.ap, avPl=disp.pliante;
-    var out=[];
-    function duble(n){ return n===1?'1 cameră dublă':n+' camere duble'; }
-    function pliante(n){ return n===1?'1 pat pliant':n+' paturi pliante'; }
-    if(total<=2 && avD>0) out.push('1 cameră dublă');
-    var nStd=Math.ceil(total/2);
-    if(nStd<=avD) out.push(duble(nStd));
-    if(avA && total>=3 && total<=4) out.push('Apartament familial');
-    if(avA && total>=5 && total<=10){ var eD=Math.ceil((total-4)/2); if(eD<=avD) out.push('Apartament+'+duble(eD)); }
-    if(avA && total>=11 && total<=12 && avD>=4) out.push('Apartament+4 camere duble');
-    var nEco=Math.floor(total/2); var nBed=total-nEco*2;
-    if(nBed===1 && nEco<=avD && avPl>=1 && nCopii>=1) out.push(duble(nEco)+'+'+pliante(1));
-    if(total>=13 && avA && avD>=4){ var nPl=total-12; if(nPl<=avPl) out.push('Apartament+4 camere duble+'+pliante(nPl)); }
-    return out;
+  // returnează true dacă există cel puțin o combinație validă (logică identică cu buildCombos)
+  function getCombosDisp(total, disp, nA, nC) {
+    var nAd = (nA !== undefined) ? nA : nAdulti;
+    var nCo = (nC !== undefined) ? nC : nCopii;
+    var avD = disp.dubles, avA = disp.ap, avPl = disp.pliante;
+
+    function tryValid(d, ap, pl) {
+      if (!ap && d === 0) return false;
+      if (d > Math.min(avD, 4)) return false;
+      var spots = d * 2 + (ap ? 4 : 0);
+      if (spots < nAd) return false;
+      var maxPl = d + (ap ? 2 : 0);
+      if (pl < 0 || pl > nCo || pl > avPl || pl > maxPl) return false;
+      if (spots + pl < total) return false;
+      return true;
+    }
+
+    // Fără apartament
+    var d_min = Math.max(Math.ceil(total / 3), Math.ceil(nAd / 2));
+    var d_all = Math.ceil(total / 2);
+    for (var d = d_min; d <= Math.min(d_all, Math.min(avD, 4)); d++) {
+      var pl = Math.max(total - d * 2, 0);
+      if (tryValid(d, false, pl)) return ['ok'];
+      if (tryValid(d, false, 0))  return ['ok'];
+    }
+
+    // Cu apartament
+    if (avA && total >= 3) {
+      var d_nec_ap  = Math.max(Math.ceil((nAd - 4) / 2), 0);
+      var d_min_ap  = Math.max(Math.ceil((total - 6) / 3), d_nec_ap, 0);
+      var d_all_ap  = Math.max(Math.ceil((total - 4) / 2), 0);
+      for (var da = d_min_ap; da <= Math.min(d_all_ap, Math.min(avD, 4)); da++) {
+        var pla = Math.max(total - (4 + da * 2), 0);
+        if (tryValid(da, true, pla)) return ['ok'];
+        if (tryValid(da, true, 0))  return ['ok'];
+      }
+    }
+
+    return [];
   }
 
   // ── State date selectate ─────────────────────────────────────
