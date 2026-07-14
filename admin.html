@@ -669,19 +669,21 @@ function closeCancelModal() {
 function confirmCancel(sendEmail) {
   var id = _cancelRezId;
   if (!id) return;
+  // Salvăm datele ÎNAINTE de closeCancelModal care le resetează la null
+  var motiv       = sendEmail ? (document.getElementById('cancelMotiv').value.trim()) : '';
+  var savedCerere = _cancelCerere;
+  var savedRezData = _cancelRezData;
   closeCancelModal();
 
   if (sendEmail) {
-    var motiv  = document.getElementById('cancelMotiv').value.trim();
-    // Folosim datele din _cancelCerere sau, dacă cererea a fost ștearsă, din datele salvate în rezervare
-    var d = _cancelRezData || {};
+    var d = savedRezData || {};
     var clientEmail = '';
     var clientName  = 'Stimate client';
     var clientCam   = (d.c || []).join(', ') || '—';
     var clientIn    = fmtDate(d.s || '') || '—';
     var clientOut   = fmtDate(d.e || '') || '—';
-    if (_cancelCerere) {
-      var c = _cancelCerere;
+    if (savedCerere) {
+      var c = savedCerere;
       clientEmail = c.email     || c.from_email || '';
       clientName  = c.name      || c.from_name  || 'Stimate client';
       clientCam   = c.camera    || clientCam;
