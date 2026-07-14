@@ -1601,10 +1601,13 @@
       }
     }
 
-    // 3. Apartament + camere duble (5–10 pers)
-    if (avA && total >= 5 && total <= 10) {
-      var eD = Math.ceil((total - 4) / 2);
-      if (eD <= avD) {
+    // 3. Apartament + camere duble
+    // eD = camere extra necesare: max(adulți ce depășesc ap, copii ce depășesc cele 2 pliante din ap)
+    if (avA) {
+      var eD_ad  = Math.max(Math.ceil((nAdulti - 4) / 2), 0);
+      var eD_cop = Math.max(nCopii - 2, 0);
+      var eD     = Math.max(eD_ad, eD_cop);
+      if (eD >= 1 && eD <= 3 && eD <= avD) {
         opts.push({ label: 'Apartament + ' + duble(eD), price: fmt(A + eD * D), tag: 'Recomandat', tagCls: 'tag-rec',
           note: 'Apartament (2 dorm., unul de trecere) + camere suplimentare', val: 'Apartament + ' + duble(eD) });
       }
