@@ -258,6 +258,7 @@ function initAdminFlatpickr() {
     onDayCreate: function(currentdates, dStr, fp, dayElem) {
       if (dayElem.dateObj) {
         if (ziAdminOcupataTotal(dayElem.dateObj)) {
+          dayElem.classList.add('flatpickr-disabled');   // blocat — nu se poate selecta
           dayElem.classList.add('admin-zi-plina');       // roșu — toate camerele ocupate
         } else if (ziAdminAreRezervare(dayElem.dateObj)) {
           dayElem.classList.add('has-rezervare');        // galben — parțial ocupat
@@ -278,6 +279,7 @@ function initAdminFlatpickr() {
     onDayCreate: function(currentdates, dStr, fp, dayElem) {
       if (dayElem.dateObj) {
         if (ziAdminOcupataTotal(dayElem.dateObj)) {
+          dayElem.classList.add('flatpickr-disabled');
           dayElem.classList.add('admin-zi-plina');
         } else if (ziAdminAreRezervare(dayElem.dateObj)) {
           dayElem.classList.add('has-rezervare');
@@ -564,6 +566,8 @@ function listenRezervari() {
     var rows = [];
     snap.forEach(function(doc) { rows.push({ id: doc.id, ...doc.data() }); });
     ADMIN_REZERVARI = rows;
+    if (fpAdminIn)  try { fpAdminIn.redraw();  } catch(e) {}
+    if (fpAdminOut) try { fpAdminOut.redraw(); } catch(e) {}
     var tbody = document.getElementById('rezTable');
     if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
     else tbody.innerHTML = rows.map(function(r) {
