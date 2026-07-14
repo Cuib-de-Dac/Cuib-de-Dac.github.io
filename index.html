@@ -1242,7 +1242,7 @@
   function getCamereBlocate(sStr, eStr) {
     var s=toD(sStr), e=toD(eStr), bl={};
     REZERVARI.forEach(function(r) {
-      var rs=toD(r.s), re=toD(r.e);
+      var rs=toD(r.s), re=addZ(toD(r.e),1); // +1 zi curățenie după checkout
       if (s < re && e > rs) r.c.forEach(function(c){ bl[c]=true; });
     });
     return bl;

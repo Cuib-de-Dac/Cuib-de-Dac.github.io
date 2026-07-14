@@ -8,6 +8,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/ro.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a1a2e; min-height: 100vh; }
@@ -119,7 +122,19 @@
       .stats { grid-template-columns: 1fr; }
       .add-form { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── Flatpickr — temă identică cu site-ul ── */
+    .flatpickr-calendar { font-family:'Segoe UI',sans-serif; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.18); border:1.5px solid #c8dfc8; }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange { background:#2a6e18 !important; border-color:#2a6e18 !important; }
+    .flatpickr-day.inRange { background:#d4edda !important; border-color:#d4edda !important; color:#2a6e18 !important; }
+    .flatpickr-day:hover { background:#e8f5e9; border-color:#a5c8a5; }
+    .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover { background:#fee2e2 !important; color:#ef4444 !important; border-color:transparent !important; text-decoration:line-through; cursor:not-allowed; }
+    .flatpickr-months .flatpickr-month, .flatpickr-monthDropdown-months { background:#2a6e18; color:#fff; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months { color:#fff; }
+    .flatpickr-weekday { color:#666; }
+    .flatpickr-day.has-rezervare { background:#fef3c7 !important; }
+    #addCheckin, #addCheckout { cursor:pointer; background:#fff; }
+</style>
 </head>
 <body>
 
@@ -172,11 +187,11 @@
         <div class="add-form">
           <div>
             <label>Check-in (YYYY-MM-DD)</label>
-            <input type="date" id="addCheckin">
+            <input type="text" id="addCheckin" placeholder="Selectează data" readonly style="cursor:pointer;">
           </div>
           <div>
             <label>Check-out (YYYY-MM-DD)</label>
-            <input type="date" id="addCheckout">
+            <input type="text" id="addCheckout" placeholder="Selectează data" readonly style="cursor:pointer;">
           </div>
           <div>
             <label>Camere blocate</label>
@@ -204,6 +219,48 @@ var EMAILJS_TPL_APROB  = 'template_aprob01';
 var EMAILJS_TPL_RESPNG = 'template_respng01';
 emailjs.init({ publicKey: 'GG4sm6sU2kOvj0CPX' });
 
+// ── Admin Flatpickr ──────────────────────────────────────────
+var ADMIN_REZERVARI = [];
+var fpAdminIn, fpAdminOut;
+
+function adminToD(s) { var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function adminAddZ(d,n) { var r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function adminToS(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
+function ziAdminAreRezervare(dateObj) {
+  var s = adminToD(adminToS(dateObj));
+  var e = adminAddZ(s, 1);
+  return ADMIN_REZERVARI.some(function(r) {
+    var rs = adminToD(r.s), re = adminAddZ(adminToD(r.e), 1);
+    return s < re && e > rs;
+  });
+}
+
+function initAdminFlatpickr() {
+  fpAdminIn = flatpickr('#addCheckin', {
+    locale: 'ro',
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      if (ziAdminAreRezervare(dObj)) dayElem.classList.add('has-rezervare');
+    },
+    onChange: function(sel) {
+      if (fpAdminOut) {
+        fpAdminOut.set('minDate', sel[0] ? adminAddZ(sel[0], 1) : 'today');
+        fpAdminOut.clear();
+      }
+    }
+  });
+  fpAdminOut = flatpickr('#addCheckout', {
+    locale: 'ro',
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      if (ziAdminAreRezervare(dObj)) dayElem.classList.add('has-rezervare');
+    }
+  });
+}
+
 var FB_CONFIG = {
   apiKey:            "AIzaSyBUi1EJb9HRDpqXlRRuxe5BplayUGUO9eQ",
   authDomain:        "cuib-de-dac.firebaseapp.com",
@@ -230,6 +287,7 @@ function showDashboard() {
   document.getElementById('userEmail').textContent = 'Admin';
   listenCereri();
   listenRezervari();
+  initAdminFlatpickr();
 }
 
 function showLogin() {
@@ -422,12 +480,18 @@ function confirmReject() {
 function camToCode(cam) {
   // Mapează numele afișat al camerei la codul folosit în disponibilitate
   cam = (cam || '').toLowerCase();
+  // Combo apartament + camere duble — verifică ÎNAINTE de apartamentul singur
+  if (cam.includes('apart') && cam.includes('camer')) {
+    var m = cam.match(/(\d+)\s*camer/);
+    var n = m ? Math.min(parseInt(m[1]), 4) : 4;
+    return ['ap', 'p1', 'e1', 'e2', 'e3'].slice(0, n + 1);
+  }
   if (cam.includes('apart')) return ['ap'];
   if (cam.includes('p1') || cam.includes('dubla 1') || cam.includes('dublă 1')) return ['p1'];
   if (cam.includes('e1') || cam.includes('dubla 2') || cam.includes('dublă 2')) return ['e1'];
   if (cam.includes('e2') || cam.includes('dubla 3') || cam.includes('dublă 3')) return ['e2'];
   if (cam.includes('e3') || cam.includes('dubla 4') || cam.includes('dublă 4')) return ['e3'];
-  // Combo
+  // Combo explicit cu coduri
   var codes = [];
   if (cam.includes('ap')) codes.push('ap');
   ['p1','e1','e2','e3'].forEach(function(d){ if(cam.includes(d)) codes.push(d); });
@@ -439,6 +503,9 @@ function listenRezervari() {
   db.collection('rezervari').orderBy('s').onSnapshot(function(snap) {
     var rows = [];
     snap.forEach(function(doc) { rows.push({ id: doc.id, ...doc.data() }); });
+    ADMIN_REZERVARI = rows;
+    if (fpAdminIn) fpAdminIn.redraw();
+    if (fpAdminOut) fpAdminOut.redraw();
     var tbody = document.getElementById('rezTable');
     if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
     else tbody.innerHTML = rows.map(function(r) {
@@ -467,8 +534,8 @@ function addRezervare() {
   if (cin >= cout) { alert('Check-out trebuie să fie după check-in.'); return; }
   db.collection('rezervari').add({ s: cin, e: cout, c: cams })
     .then(function() {
-      document.getElementById('addCheckin').value = '';
-      document.getElementById('addCheckout').value = '';
+      if (fpAdminIn) fpAdminIn.clear(); else document.getElementById('addCheckin').value = '';
+      if (fpAdminOut) fpAdminOut.clear(); else document.getElementById('addCheckout').value = '';
       document.querySelectorAll('.camere-check input').forEach(function(i){ i.checked = false; });
     })
     .catch(function(e){ alert('Eroare: ' + e.message); });
