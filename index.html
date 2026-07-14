@@ -1575,12 +1575,12 @@
     function pliante(n) { return n === 1 ? '1 pat pliant'   : n + ' paturi pliante'; }
     function fmt(p)     { return p + ' lei/noapte'; }
 
-    // 1. Camere duble (câte 2 pers/cameră) — inclusiv 1–2 pers
-    var nStd = Math.ceil(total / 2);
-    if (nStd >= 1 && nStd <= avD) {
-      var noteStd = total <= 2
-        ? 'Pat matrimonial, baie privată — perfect pentru ' + total + (total === 1 ? ' persoană' : ' persoane')
-        : 'Câte 2 persoane per cameră';
+    // 1. Camere duble (câte 2 adulți/cameră) — doar fără copii; copiii merg la paturi pliante
+    var nStd = Math.ceil(nAdulti / 2);
+    if (nCopii === 0 && nStd >= 1 && nStd <= avD) {
+      var noteStd = nAdulti <= 2
+        ? 'Pat matrimonial, baie privată — perfect pentru ' + nAdulti + (nAdulti === 1 ? ' persoană' : ' persoane')
+        : 'Câte 2 adulți per cameră';
       opts.push({ label: duble(nStd), price: fmt(nStd * D), tag: 'Recomandat', tagCls: 'tag-rec', note: noteStd, val: duble(nStd) });
     }
 
@@ -1601,15 +1601,18 @@
       }
     }
 
-    // 3. Apartament + camere duble
+    // 3. Apartament + camere duble (+ paturi pliante pentru copii dacă e cazul)
     // eD = camere extra necesare: max(adulți ce depășesc ap, copii ce depășesc cele 2 pliante din ap)
     if (avA) {
       var eD_ad  = Math.max(Math.ceil((nAdulti - 4) / 2), 0);
       var eD_cop = Math.max(nCopii - 2, 0);
       var eD     = Math.max(eD_ad, eD_cop);
-      if (eD >= 1 && eD <= 3 && eD <= avD) {
-        opts.push({ label: 'Apartament + ' + duble(eD), price: fmt(A + eD * D), tag: 'Recomandat', tagCls: 'tag-rec',
-          note: 'Apartament (2 dorm., unul de trecere) + camere suplimentare', val: 'Apartament + ' + duble(eD) });
+      if (eD >= 1 && eD <= 3 && eD <= avD && (nCopii === 0 || nCopii <= avPl)) {
+        var labelSec3 = 'Apartament + ' + duble(eD) + (nCopii > 0 ? ' + ' + pliante(nCopii) : '');
+        var valSec3   = 'Apartament + ' + duble(eD) + (nCopii > 0 ? ' + ' + pliante(nCopii) : '');
+        opts.push({ label: labelSec3, price: fmt(A + eD * D + nCopii * PL), tag: 'Recomandat', tagCls: 'tag-rec',
+          note: 'Apartament (2 dorm.) + camere suplimentare' + (nCopii > 0 ? ' + ' + nCopii + (nCopii===1?' pat pliant':' paturi pliante') + ' (50 lei/noapte fiecare)' : ''),
+          val: valSec3 });
       }
     }
 

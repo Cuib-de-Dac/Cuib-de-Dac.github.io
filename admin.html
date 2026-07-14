@@ -132,7 +132,9 @@
     .flatpickr-months .flatpickr-month, .flatpickr-monthDropdown-months { background:#2a6e18; color:#fff; }
     .flatpickr-current-month .flatpickr-monthDropdown-months { color:#fff; }
     .flatpickr-weekday { color:#666; }
-    .flatpickr-day.has-rezervare { background:#fef3c7 !important; }
+    .flatpickr-day.has-rezervare { background:#fef3c7 !important; border-color:#f59e0b !important; }
+.flatpickr-day.admin-zi-plina { background:#fee2e2 !important; color:#ef4444 !important; text-decoration:line-through; border-color:#ef4444 !important; }
+.flatpickr-day.admin-zi-plina:hover { background:#fecaca !important; }
     #addCheckin, #addCheckout { cursor:pointer; background:#fff; }
 </style>
 </head>
@@ -236,13 +238,31 @@ function ziAdminAreRezervare(dateObj) {
   });
 }
 
+function ziAdminOcupataTotal(dateObj) {
+  // Returnează true dacă TOATE unitățile (ap+p1+e1+e2+e3) sunt blocate în ziua respectivă
+  var s = adminToD(adminToS(dateObj));
+  var e = adminAddZ(s, 1);
+  var bl = {};
+  ADMIN_REZERVARI.forEach(function(r) {
+    var rs = adminToD(r.s), re = adminAddZ(adminToD(r.e), 1);
+    if (s < re && e > rs) (r.c || []).forEach(function(c){ bl[c] = true; });
+  });
+  return bl['ap'] && bl['p1'] && bl['e1'] && bl['e2'] && bl['e3'];
+}
+
 function initAdminFlatpickr() {
   fpAdminIn = flatpickr('#addCheckin', {
     locale: 'ro',
     dateFormat: 'Y-m-d',
     minDate: 'today',
     onDayCreate: function(currentdates, dStr, fp, dayElem) {
-      if (dayElem.dateObj && ziAdminAreRezervare(dayElem.dateObj)) dayElem.classList.add('has-rezervare');
+      if (dayElem.dateObj) {
+        if (ziAdminOcupataTotal(dayElem.dateObj)) {
+          dayElem.classList.add('admin-zi-plina');       // roșu — toate camerele ocupate
+        } else if (ziAdminAreRezervare(dayElem.dateObj)) {
+          dayElem.classList.add('has-rezervare');        // galben — parțial ocupat
+        }
+      }
     },
     onChange: function(sel) {
       if (fpAdminOut) {
@@ -256,7 +276,13 @@ function initAdminFlatpickr() {
     dateFormat: 'Y-m-d',
     minDate: 'today',
     onDayCreate: function(currentdates, dStr, fp, dayElem) {
-      if (dayElem.dateObj && ziAdminAreRezervare(dayElem.dateObj)) dayElem.classList.add('has-rezervare');
+      if (dayElem.dateObj) {
+        if (ziAdminOcupataTotal(dayElem.dateObj)) {
+          dayElem.classList.add('admin-zi-plina');
+        } else if (ziAdminAreRezervare(dayElem.dateObj)) {
+          dayElem.classList.add('has-rezervare');
+        }
+      }
     }
   });
 }
