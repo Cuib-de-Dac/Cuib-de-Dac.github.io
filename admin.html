@@ -462,6 +462,7 @@ function confirmCerere(id) {
     batch.set(rezRef, { s: checkIn, e: checkOut, c: camCod, sursa: 'cerere_' + id,
       clientName:  c.name      || c.from_name  || '',
       clientEmail: c.email     || c.from_email || '',
+      clientPhone: c.telefon   || '',
       camera:      c.camera    || '' });
   }
   // Actualizează statusul cererii
