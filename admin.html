@@ -212,6 +212,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Arhivă anulate -->
+    <div class="section" style="margin-top:24px;">
+      <h2>🗂️ Arhivă — Rezervări anulate</h2>
+      <table class="rez-table">
+        <thead><tr><th>Nume client</th><th>Email</th><th>Telefon</th><th>Check-in</th><th>Check-out</th><th>Camere</th><th>Motiv anulare</th><th>Anulat la</th></tr></thead>
+        <tbody id="arhivaAnulateTable"><tr><td colspan="8" class="empty-msg">Se încarcă...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- Arhivă eliberate -->
+    <div class="section" style="margin-top:24px;">
+      <h2>✅ Arhivă — Camere eliberate</h2>
+      <table class="rez-table">
+        <thead><tr><th>Nume client</th><th>Email</th><th>Telefon</th><th>Check-in</th><th>Check-out</th><th>Camere</th></tr></thead>
+        <tbody id="arhivaEliberateTable"><tr><td colspan="6" class="empty-msg">Se încarcă...</td></tr></tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 
@@ -316,6 +335,8 @@ function showDashboard() {
   document.getElementById('userEmail').textContent = 'Admin';
   listenCereri();
   listenRezervari();
+  listenArhiva();
+  autoArhiveEliberate();
   initAdminFlatpickr();
 }
 
@@ -597,6 +618,14 @@ function listenRezervari() {
   db.collection('rezervari').orderBy('s').onSnapshot(function(snap) {
     var rows = [];
     snap.forEach(function(doc) { rows.push({ id: doc.id, ...doc.data() }); });
+    // Îmbogățire din allCereri pentru rezervările vechi fără clientPhone
+    rows.forEach(function(r) {
+      if (!r.clientPhone && r.sursa && r.sursa.startsWith('cerere_')) {
+        var cerId = r.sursa.replace('cerere_', '');
+        var c = (allCereri || []).find(function(x){ return x.id === cerId; });
+        if (c) r.clientPhone = c.telefon || '';
+      }
+    });
     ADMIN_REZERVARI = rows;
     if (fpAdminIn)  try { fpAdminIn.redraw();  } catch(e) {}
     if (fpAdminOut) try { fpAdminOut.redraw(); } catch(e) {}
@@ -614,6 +643,77 @@ function listenRezervari() {
       '</tr>';
     }).join('');
     document.getElementById('statRezervari').textContent = rows.length;
+  });
+}
+
+// ── Arhivă ───────────────────────────────────────────────────────
+function listenArhiva() {
+  db.collection('arhiva').orderBy('data_arhivare', 'desc').onSnapshot(function(snap) {
+    var anulate = [], eliberate = [];
+    snap.forEach(function(doc) {
+      var d = doc.data(); d.id = doc.id;
+      if (d.tip === 'anulat')   anulate.push(d);
+      else if (d.tip === 'eliberat') eliberate.push(d);
+    });
+    // Anulate
+    var tA = document.getElementById('arhivaAnulateTable');
+    if (!anulate.length) {
+      tA.innerHTML = '<tr><td colspan="8" class="empty-msg">Nicio rezervare anulată.</td></tr>';
+    } else {
+      tA.innerHTML = anulate.map(function(r) {
+        var dataArh = r.data_arhivare && r.data_arhivare.toDate ? fmtDate(r.data_arhivare.toDate().toISOString().slice(0,10)) : '—';
+        return '<tr>' +
+          '<td>' + esc(r.clientName  || '—') + '</td>' +
+          '<td>' + esc(r.clientEmail || '—') + '</td>' +
+          '<td>' + esc(r.clientPhone || '—') + '</td>' +
+          '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
+          '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
+          '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
+          '<td style="max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:0.82rem;color:#888;">' + esc(r.motiv || '—') + '</td>' +
+          '<td>' + dataArh + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+    // Eliberate
+    var tE = document.getElementById('arhivaEliberateTable');
+    if (!eliberate.length) {
+      tE.innerHTML = '<tr><td colspan="6" class="empty-msg">Nicio cameră eliberată încă.</td></tr>';
+    } else {
+      tE.innerHTML = eliberate.map(function(r) {
+        var dataArh = r.data_arhivare && r.data_arhivare.toDate ? fmtDate(r.data_arhivare.toDate().toISOString().slice(0,10)) : '—';
+        return '<tr>' +
+          '<td>' + esc(r.clientName  || '—') + '</td>' +
+          '<td>' + esc(r.clientEmail || '—') + '</td>' +
+          '<td>' + esc(r.clientPhone || '—') + '</td>' +
+          '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
+          '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
+          '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
+        '</tr>';
+      }).join('');
+    }
+  });
+}
+
+function autoArhiveEliberate() {
+  var azi = new Date(); azi.setHours(0,0,0,0);
+  db.collection('rezervari').get().then(function(snap) {
+    var batch = db.batch();
+    var nr = 0;
+    snap.forEach(function(doc) {
+      var d = doc.data();
+      if (!d.e) return;
+      var checkout = toD_adm(d.e);
+      if (checkout < azi) {
+        var arhRef = db.collection('arhiva').doc();
+        batch.set(arhRef, Object.assign({}, d, {
+          tip: 'eliberat',
+          data_arhivare: firebase.firestore.FieldValue.serverTimestamp()
+        }));
+        batch.delete(doc.ref);
+        nr++;
+      }
+    });
+    if (nr > 0) batch.commit().catch(function(e){ console.warn('autoArhive err:', e); });
   });
 }
 
@@ -711,8 +811,18 @@ function confirmCancel(sendEmail) {
     }
   }
 
-  db.collection('rezervari').doc(id).delete()
-    .catch(function(e){ alert('Eroare ștergere: ' + e.message); });
+  // Arhivează în loc să șteargă
+  db.collection('rezervari').doc(id).get().then(function(doc) {
+    if (!doc.exists) return;
+    var rezData = doc.data();
+    return db.collection('arhiva').add(Object.assign({}, rezData, {
+      tip: 'anulat',
+      motiv: motiv || '',
+      data_arhivare: firebase.firestore.FieldValue.serverTimestamp()
+    })).then(function() {
+      return db.collection('rezervari').doc(id).delete();
+    });
+  }).catch(function(e){ alert('Eroare arhivare: ' + e.message); });
 }
 
 // ── Ștergere cerere din listă (confirmate / respinse) ────────
