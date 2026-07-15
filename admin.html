@@ -213,21 +213,39 @@
       </div>
     </div>
 
-    <!-- Arhivă anulate -->
-    <div class="section" style="margin-top:24px;">
-      <h2>🗂️ Arhivă — Rezervări anulate</h2>
-      <table class="rez-table">
-        <thead><tr><th>Nume client</th><th>Email</th><th>Telefon</th><th>Check-in</th><th>Check-out</th><th>Camere</th><th>Motiv anulare</th><th>Anulat la</th></tr></thead>
-        <tbody id="arhivaAnulateTable"><tr><td colspan="8" class="empty-msg">Se încarcă...</td></tr></tbody>
-      </table>
-    </div>
-
     <!-- Arhivă eliberate -->
     <div class="section" style="margin-top:24px;">
       <h2>✅ Arhivă — Camere eliberate</h2>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+        <label style="font-size:0.9rem;color:#555;">Filtrează după:</label>
+        <select id="filtruAnEl" style="padding:5px 10px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;">
+          <option value="">— Toți anii —</option>
+        </select>
+        <select id="filtruLunEl" style="padding:5px 10px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;">
+          <option value="">— Toate lunile —</option>
+        </select>
+      </div>
       <table class="rez-table">
         <thead><tr><th>Nume client</th><th>Email</th><th>Telefon</th><th>Check-in</th><th>Check-out</th><th>Camere</th></tr></thead>
         <tbody id="arhivaEliberateTable"><tr><td colspan="6" class="empty-msg">Se încarcă...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- Arhivă anulate -->
+    <div class="section" style="margin-top:24px;">
+      <h2>🗂️ Arhivă — Rezervări anulate</h2>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+        <label style="font-size:0.9rem;color:#555;">Filtrează după:</label>
+        <select id="filtruAnAn" style="padding:5px 10px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;">
+          <option value="">— Toți anii —</option>
+        </select>
+        <select id="filtruLunAn" style="padding:5px 10px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;">
+          <option value="">— Toate lunile —</option>
+        </select>
+      </div>
+      <table class="rez-table">
+        <thead><tr><th>Nume client</th><th>Email</th><th>Telefon</th><th>Check-in</th><th>Check-out</th><th>Camere</th><th>Motiv anulare</th><th>Anulat la</th></tr></thead>
+        <tbody id="arhivaAnulateTable"><tr><td colspan="8" class="empty-msg">Se încarcă...</td></tr></tbody>
       </table>
     </div>
 
@@ -647,50 +665,125 @@ function listenRezervari() {
 }
 
 // ── Arhivă ───────────────────────────────────────────────────────
+var _arhivaAnulate = [], _arhivaEliberate = [];
+
+var LUNI_RO = ['Ianuarie','Februarie','Martie','Aprilie','Mai','Iunie','Iulie','August','Septembrie','Octombrie','Noiembrie','Decembrie'];
+
+function populateArhivaFilters(anulate, eliberate) {
+  function getYM(arr) {
+    var ani = {}, luni = {};
+    arr.forEach(function(r) {
+      var d = r.data_arhivare && r.data_arhivare.toDate ? r.data_arhivare.toDate() : null;
+      if (!d) return;
+      ani[d.getFullYear()] = true;
+      luni[d.getMonth()] = true;
+    });
+    return { ani: Object.keys(ani).sort().reverse(), luni: Object.keys(luni).map(Number).sort(function(a,b){return a-b;}) };
+  }
+  function fillSelects(ymA, ymE, selAnA, selLunA, selAnE, selLunE) {
+    var allAni = {};
+    ymA.ani.forEach(function(y){ allAni[y]=true; });
+    ymE.ani.forEach(function(y){ allAni[y]=true; });
+    var allLuni = {};
+    ymA.luni.forEach(function(m){ allLuni[m]=true; });
+    ymE.luni.forEach(function(m){ allLuni[m]=true; });
+
+    function setOpts(sel, ani, luni, isAn) {
+      var cur = sel.value;
+      if (isAn) {
+        sel.innerHTML = '<option value="">— Toți anii —</option>' + ani.map(function(y){ return '<option value="'+y+'">'+y+'</option>'; }).join('');
+      } else {
+        sel.innerHTML = '<option value="">— Toate lunile —</option>' + luni.map(function(m){ return '<option value="'+m+'">'+LUNI_RO[m]+'</option>'; }).join('');
+      }
+      sel.value = cur;
+    }
+    setOpts(selAnA,  ymA.ani,  ymA.luni,  true);
+    setOpts(selLunA, ymA.ani,  ymA.luni,  false);
+    setOpts(selAnE,  ymE.ani,  ymE.luni,  true);
+    setOpts(selLunE, ymE.ani,  ymE.luni,  false);
+  }
+  var ymA = getYM(anulate), ymE = getYM(eliberate);
+  fillSelects(ymA, ymE,
+    document.getElementById('filtruAnAn'),  document.getElementById('filtruLunAn'),
+    document.getElementById('filtruAnEl'),  document.getElementById('filtruLunEl'));
+}
+
+function renderArhivaAnulate() {
+  var an  = document.getElementById('filtruAnAn').value;
+  var lun = document.getElementById('filtruLunAn').value;
+  var rows = _arhivaAnulate.filter(function(r) {
+    var d = r.data_arhivare && r.data_arhivare.toDate ? r.data_arhivare.toDate() : null;
+    if (!d) return true;
+    if (an  && String(d.getFullYear()) !== an)  return false;
+    if (lun !== '' && d.getMonth() !== Number(lun)) return false;
+    return true;
+  });
+  var tA = document.getElementById('arhivaAnulateTable');
+  if (!rows.length) {
+    tA.innerHTML = '<tr><td colspan="8" class="empty-msg">Nicio rezervare pentru filtrul selectat.</td></tr>';
+  } else {
+    tA.innerHTML = rows.map(function(r) {
+      var dataArh = r.data_arhivare && r.data_arhivare.toDate ? fmtDate(r.data_arhivare.toDate().toISOString().slice(0,10)) : '—';
+      return '<tr>' +
+        '<td>' + esc(r.clientName  || '—') + '</td>' +
+        '<td>' + esc(r.clientEmail || '—') + '</td>' +
+        '<td>' + esc(r.clientPhone || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
+        '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
+        '<td style="max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:0.82rem;color:#888;">' + esc(r.motiv || '—') + '</td>' +
+        '<td>' + dataArh + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+}
+
+function renderArhivaEliberate() {
+  var an  = document.getElementById('filtruAnEl').value;
+  var lun = document.getElementById('filtruLunEl').value;
+  var rows = _arhivaEliberate.filter(function(r) {
+    var d = r.data_arhivare && r.data_arhivare.toDate ? r.data_arhivare.toDate() : null;
+    if (!d) return true;
+    if (an  && String(d.getFullYear()) !== an)  return false;
+    if (lun !== '' && d.getMonth() !== Number(lun)) return false;
+    return true;
+  });
+  var tE = document.getElementById('arhivaEliberateTable');
+  if (!rows.length) {
+    tE.innerHTML = '<tr><td colspan="6" class="empty-msg">Nicio cameră eliberată pentru filtrul selectat.</td></tr>';
+  } else {
+    tE.innerHTML = rows.map(function(r) {
+      return '<tr>' +
+        '<td>' + esc(r.clientName  || '—') + '</td>' +
+        '<td>' + esc(r.clientEmail || '—') + '</td>' +
+        '<td>' + esc(r.clientPhone || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
+        '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+}
+
 function listenArhiva() {
+  // Wire up filter change events
+  ['filtruAnAn','filtruLunAn'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', renderArhivaAnulate);
+  });
+  ['filtruAnEl','filtruLunEl'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', renderArhivaEliberate);
+  });
+
   db.collection('arhiva').orderBy('data_arhivare', 'desc').onSnapshot(function(snap) {
-    var anulate = [], eliberate = [];
+    _arhivaAnulate = []; _arhivaEliberate = [];
     snap.forEach(function(doc) {
       var d = doc.data(); d.id = doc.id;
-      if (d.tip === 'anulat')   anulate.push(d);
-      else if (d.tip === 'eliberat') eliberate.push(d);
+      if (d.tip === 'anulat')        _arhivaAnulate.push(d);
+      else if (d.tip === 'eliberat') _arhivaEliberate.push(d);
     });
-    // Anulate
-    var tA = document.getElementById('arhivaAnulateTable');
-    if (!anulate.length) {
-      tA.innerHTML = '<tr><td colspan="8" class="empty-msg">Nicio rezervare anulată.</td></tr>';
-    } else {
-      tA.innerHTML = anulate.map(function(r) {
-        var dataArh = r.data_arhivare && r.data_arhivare.toDate ? fmtDate(r.data_arhivare.toDate().toISOString().slice(0,10)) : '—';
-        return '<tr>' +
-          '<td>' + esc(r.clientName  || '—') + '</td>' +
-          '<td>' + esc(r.clientEmail || '—') + '</td>' +
-          '<td>' + esc(r.clientPhone || '—') + '</td>' +
-          '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
-          '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
-          '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
-          '<td style="max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:0.82rem;color:#888;">' + esc(r.motiv || '—') + '</td>' +
-          '<td>' + dataArh + '</td>' +
-        '</tr>';
-      }).join('');
-    }
-    // Eliberate
-    var tE = document.getElementById('arhivaEliberateTable');
-    if (!eliberate.length) {
-      tE.innerHTML = '<tr><td colspan="6" class="empty-msg">Nicio cameră eliberată încă.</td></tr>';
-    } else {
-      tE.innerHTML = eliberate.map(function(r) {
-        var dataArh = r.data_arhivare && r.data_arhivare.toDate ? fmtDate(r.data_arhivare.toDate().toISOString().slice(0,10)) : '—';
-        return '<tr>' +
-          '<td>' + esc(r.clientName  || '—') + '</td>' +
-          '<td>' + esc(r.clientEmail || '—') + '</td>' +
-          '<td>' + esc(r.clientPhone || '—') + '</td>' +
-          '<td>' + esc(fmtDate(r.s) || '—') + '</td>' +
-          '<td>' + esc(fmtDate(r.e) || '—') + '</td>' +
-          '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
-        '</tr>';
-      }).join('');
-    }
+    populateArhivaFilters(_arhivaAnulate, _arhivaEliberate);
+    renderArhivaAnulate();
+    renderArhivaEliberate();
   });
 }
 
