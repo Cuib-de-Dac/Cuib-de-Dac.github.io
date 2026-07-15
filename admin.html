@@ -600,13 +600,17 @@ function listenRezervari() {
     if (fpAdminIn)  try { fpAdminIn.redraw();  } catch(e) {}
     if (fpAdminOut) try { fpAdminOut.redraw(); } catch(e) {}
     var tbody = document.getElementById('rezTable');
-    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">Nicio rezervare confirmată.</td></tr>'; }
     else tbody.innerHTML = rows.map(function(r) {
       return '<tr>' +
-        '<td>' + esc(r.s) + '</td>' +
-        '<td>' + esc(r.e) + '</td>' +
-        '<td>' + (r.c || []).join(', ') + '</td>' +
-        '<td><button class="btn-delete" onclick="deleteRezervare(\'' + r.id + '\')">Șterge</button></td>' +
+        '<td>' + esc(r.clientName  || '—') + '</td>' +
+        '<td>' + esc(r.clientEmail || '—') + '</td>' +
+        '<td>' + esc(r.clientPhone || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.s) || r.s || '—') + '</td>' +
+        '<td>' + esc(fmtDate(r.e) || r.e || '—') + '</td>' +
+        '<td>' + esc((r.c || []).join(', ') || '—') + '</td>' +
+        '<td style="max-width:200px;white-space:pre-wrap;word-break:break-word;">' + esc(r.clientNote || '—') + '</td>' +
+        '<td><button class="btn-delete" onclick="deleteRezervare(\'' + r.id + '\')">Anulează</button></td>' +
       '</tr>';
     }).join('');
     document.getElementById('statRezervari').textContent = rows.length;
